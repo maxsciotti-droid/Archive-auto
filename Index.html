@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RM Sotheby's — Magnus Walker MW26 | Registro Aste</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+  :root{--nero:#0d0d0d;--oro:#c8a45a;--oro-chiaro:#e8c97a;--crema:#f5efe3;--grigio-scuro:#1a1a1a;--grigio-medio:#2e2e2e;--grigio-testo:#888;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--nero);color:var(--crema);min-height:100vh;}
+  header{background:linear-gradient(135deg,var(--grigio-scuro) 0%,#111 100%);border-bottom:2px solid var(--oro);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:70px;position:sticky;top:0;z-index:100;}
+  .logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--oro);}
+  .logo span{font-weight:300;color:var(--crema);font-size:0.75rem;display:block;font-family:'IBM Plex Mono',monospace;letter-spacing:0.2em;text-transform:uppercase;}
+  .badge{background:rgba(200,164,90,0.15);border:1px solid var(--oro);color:var(--oro);padding:0.3rem 0.9rem;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;}
+  .container{max-width:1400px;margin:0 auto;padding:2rem;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:2rem;}
+  .kpi{background:var(--grigio-scuro);border:1px solid #333;border-top:3px solid var(--oro);padding:1.2rem;}
+  .kpi-label{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--grigio-testo);margin-bottom:0.4rem;}
+  .kpi-value{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--oro);}
+  .kpi-sub{font-size:0.7rem;color:var(--grigio-testo);margin-top:0.3rem;font-family:'IBM Plex Mono',monospace;}
+  .toolbar{display:flex;gap:0.8rem;margin-bottom:1.2rem;flex-wrap:wrap;align-items:center;}
+  .search-box{background:var(--grigio-scuro);border:1px solid #333;color:var(--crema);padding:0.6rem 1rem;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;width:260px;outline:none;transition:border-color 0.2s;}
+  .search-box:focus{border-color:var(--oro);}
+  .search-box::placeholder{color:#444;}
+  select.filt{background:var(--grigio-scuro);border:1px solid #333;color:var(--crema);padding:0.6rem 0.9rem;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;cursor:pointer;outline:none;}
+  .btn{padding:0.55rem 1.2rem;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;letter-spacing:0.06em;cursor:pointer;border:none;text-transform:uppercase;transition:all 0.2s;}
+  .btn-gold{background:var(--oro);color:var(--nero);font-weight:500;}
+  .btn-gold:hover{background:var(--oro-chiaro);}
+  .btn-outline{background:transparent;color:var(--oro);border:1px solid var(--oro);}
+  .btn-outline:hover{background:var(--oro);color:var(--nero);}
+  .btn-danger{background:transparent;color:#e74c3c;border:1px solid #e74c3c;font-size:0.7rem;padding:0.3rem 0.6rem;}
+  .btn-danger:hover{background:#e74c3c;color:#fff;}
+  .section-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--oro);margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem;}
+  .section-title::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--oro),transparent);opacity:0.4;}
+  .table-wrap{overflow-x:auto;border:1px solid #2a2a2a;}
+  table{width:100%;border-collapse:collapse;font-size:0.83rem;}
+  thead tr{background:var(--grigio-scuro);border-bottom:2px solid var(--oro);}
+  th{padding:0.8rem 0.9rem;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--oro);white-space:nowrap;}
+  tbody tr{border-bottom:1px solid #1e1e1e;transition:background 0.15s;}
+  tbody tr:hover{background:rgba(200,164,90,0.05);}
+  td{padding:0.65rem 0.9rem;color:var(--crema);vertical-align:middle;}
+  td.mono{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:#aaa;}
+  .price{font-family:'Playfair Display',serif;font-size:1rem;color:var(--oro);}
+  .tag{display:inline-block;padding:0.18rem 0.5rem;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;}
+  .tag-auto{background:rgba(39,174,96,0.15);color:#5ddb8f;border:1px solid rgba(39,174,96,0.3);}
+  .tag-memo{background:rgba(36,113,163,0.15);color:#5dade2;border:1px solid rgba(36,113,163,0.3);}
+  .tag-res{background:rgba(200,164,90,0.12);color:var(--oro);border:1px solid rgba(200,164,90,0.25);}
+  .lot-num{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--oro);font-weight:500;}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--grigio-scuro);border:1px solid var(--oro);width:100%;max-width:680px;max-height:90vh;overflow-y:auto;}
+  .modal-header{background:#111;padding:1.1rem 1.6rem;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;}
+  .modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--oro);}
+  .modal-close{background:none;border:none;color:var(--grigio-testo);font-size:1.4rem;cursor:pointer;}
+  .modal-close:hover{color:var(--crema);}
+  .modal-body{padding:1.5rem;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .form-group{display:flex;flex-direction:column;gap:0.35rem;}
+  .form-group.full{grid-column:1/-1;}
+  label{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--oro);}
+  input,textarea,select.form-sel{background:#111;border:1px solid #333;color:var(--crema);padding:0.6rem 0.85rem;font-family:'IBM Plex Sans',sans-serif;font-size:0.86rem;outline:none;width:100%;transition:border-color 0.2s;}
+  input:focus,textarea:focus,select.form-sel:focus{border-color:var(--oro);}
+  input::placeholder,textarea::placeholder{color:#444;}
+  textarea{resize:vertical;min-height:70px;}
+  .modal-footer{padding:0.9rem 1.6rem;border-top:1px solid #333;display:flex;gap:0.7rem;justify-content:flex-end;background:#111;position:sticky;bottom:0;}
+  .info-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-bottom:1.2rem;}
+  .info-card{background:#111;border:1px solid #2a2a2a;padding:0.9rem;}
+  .info-label{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--grigio-testo);margin-bottom:0.25rem;}
+  .info-val{font-size:0.9rem;color:var(--crema);}
+  .toast{position:fixed;bottom:2rem;right:2rem;background:var(--oro);color:var(--nero);padding:0.75rem 1.3rem;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateY(0);}
+  .pager{display:flex;gap:0.3rem;align-items:center;flex-wrap:wrap;}
+  .pager button{background:transparent;border:1px solid #333;color:var(--grigio-testo);padding:0.3rem 0.7rem;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;cursor:pointer;transition:all 0.15s;}
+  .pager button:hover,.pager button.active{border-color:var(--oro);color:var(--oro);}
+  .pager-info{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--grigio-testo);margin-left:0.5rem;}
+  .note-input{background:#111;border:1px solid #333;color:var(--crema);padding:0.4rem 0.7rem;font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;width:100%;outline:none;}
+  .note-input:focus{border-color:var(--oro);}
+  .tabs{display:flex;gap:0.2rem;margin-bottom:1.5rem;}
+  .tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--grigio-testo);padding:0.5rem 1.1rem;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;transition:all 0.2s;}
+  .tab:hover,.tab.active{color:var(--oro);border-bottom-color:var(--oro);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .fade-in{animation:fadeIn 0.25s ease;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Magnus Walker MW26
+    <span>RM Sotheby's · 18–25 Marzo 2026 · 159 Lotti</span>
+  </div>
+  <div style="display:flex;gap:0.7rem;align-items:center">
+    <span class="badge">Tutti Senza Riserva</span>
+    <button class="btn btn-gold" onclick="openAddModal()">+ Aggiungi Lotto</button>
+  </div>
+</header>
+
+<div class="container">
+  <!-- KPI -->
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Totale Lotti</div><div class="kpi-value" id="k-tot">0</div><div class="kpi-sub">Importati da RM Sotheby's</div></div>
+    <div class="kpi"><div class="kpi-label">Automobili</div><div class="kpi-value" id="k-auto">0</div><div class="kpi-sub">Veicoli con anno</div></div>
+    <div class="kpi"><div class="kpi-label">Memorabilia</div><div class="kpi-value" id="k-memo">0</div><div class="kpi-sub">Ricambi, oggetti, arte</div></div>
+    <div class="kpi"><div class="kpi-label">Stima Min. Totale</div><div class="kpi-value" id="k-min">$0</div><div class="kpi-sub">Solo lotti con stima</div></div>
+    <div class="kpi"><div class="kpi-label">Stima Max. Totale</div><div class="kpi-value" id="k-max">$0</div><div class="kpi-sub">Solo lotti con stima</div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('tutti',this)">Tutti (159)</button>
+    <button class="tab" onclick="setTab('auto',this)">🚗 Automobili</button>
+    <button class="tab" onclick="setTab('memo',this)">📦 Memorabilia & Ricambi</button>
+    <button class="tab" onclick="setTab('starred',this)">⭐ Selezionati</button>
+  </div>
+
+  <div class="section-title" id="section-title">Tutti i Lotti</div>
+
+  <div class="toolbar">
+    <input class="search-box" type="text" placeholder="Cerca lotto, modello, anno…" id="search-input" oninput="renderTable()">
+    <select class="filt" id="filt-anno" onchange="renderTable()">
+      <option value="">Tutti gli anni</option>
+    </select>
+    <div class="pager" id="pager-top"></div>
+    <span class="pager-info" id="pager-info"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Lotto</th><th>Tipo</th><th>Anno</th><th>Descrizione</th>
+        <th>Stima Min.</th><th>Stima Max.</th><th>Riserva</th><th>Note</th><th>★</th>
+      </tr></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+  <div style="margin-top:0.8rem;display:flex;gap:0.5rem;align-items:center">
+    <div class="pager" id="pager-bottom"></div>
+    <span class="pager-info" id="pager-info2"></span>
+  </div>
+</div>
+
+<!-- MODAL DETTAGLIO/MODIFICA -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal fade-in">
+    <div class="modal-header">
+      <div class="modal-title" id="detail-title">Dettaglio Lotto</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-row" id="detail-info"></div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Note personali</label>
+          <textarea id="edit-note" placeholder="Aggiungi note, osservazioni, interesse…"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Il tuo prezzo obiettivo (USD)</label>
+          <input type="number" id="edit-target" placeholder="es. 180000">
+        </div>
+        <div class="form-group">
+          <label>Stato interesse</label>
+          <select class="form-sel" id="edit-interesse">
+            <option value="">—</option>
+            <option>🔥 Alta priorità</option>
+            <option>👀 Da seguire</option>
+            <option>💤 Bassa priorità</option>
+            <option>❌ Non interessato</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Chiudi</button>
+      <button class="btn btn-gold" onclick="saveLotNote()">Salva Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGGIUNGI LOTTO -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal fade-in">
+    <div class="modal-header">
+      <div class="modal-title">Aggiungi Lotto Manuale</div>
+      <button class="modal-close" onclick="document.getElementById('add-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>N° Lotto</label><input type="text" id="new-lot" placeholder="es. 260"></div>
+        <div class="form-group"><label>Anno</label><input type="number" id="new-year" placeholder="1972"></div>
+        <div class="form-group full"><label>Descrizione *</label><input type="text" id="new-desc" placeholder="1972 Porsche 911 S…"></div>
+        <div class="form-group"><label>Stima Min. USD</label><input type="number" id="new-min" placeholder="0"></div>
+        <div class="form-group"><label>Stima Max. USD</label><input type="number" id="new-max" placeholder="0"></div>
+        <div class="form-group full"><label>Note</label><textarea id="new-note" placeholder="Note personali…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('add-modal').classList.remove('open')">Annulla</button>
+      <button class="btn btn-gold" onclick="addLot()">Aggiungi</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const RAW_LOTS = [{"lot":"101","year":"1980","model":"Porsche 924 Turbo","fullname":"1980 Porsche 924 Turbo","est_min":"20000","est_max":"25000","reserve":"Senza Riserva"},{"lot":"102","year":"2004","model":"Porsche 911 GT3","fullname":"2004 Porsche 911 GT3","est_min":"100000","est_max":"125000","reserve":"Senza Riserva"},{"lot":"103","year":"1995","model":"Porsche 968","fullname":"1995 Porsche 968","est_min":"25000","est_max":"30000","reserve":"Senza Riserva"},{"lot":"104","year":"1966","model":"Porsche 911","fullname":"1966 Porsche 911","est_min":"100000","est_max":"150000","reserve":"Senza Riserva"},{"lot":"105","year":"1978","model":"Porsche 928","fullname":"1978 Porsche 928","est_min":"20000","est_max":"25000","reserve":"Senza Riserva"},{"lot":"106","year":"1965","model":"Porsche 911","fullname":"1965 Porsche 911","est_min":"150000","est_max":"200000","reserve":"Senza Riserva"},{"lot":"107","year":"1979","model":"Porsche 928","fullname":"1979 Porsche 928","est_min":"10000","est_max":"15000","reserve":"Senza Riserva"},{"lot":"108","year":"1992","model":"Porsche 968","fullname":"1992 Porsche 968","est_min":"20000","est_max":"25000","reserve":"Senza Riserva"},{"lot":"109","year":"1976","model":"Porsche 911 Carrera 2.7 MFI","fullname":"1976 Porsche 911 Carrera 2.7 MFI","est_min":"200000","est_max":"250000","reserve":"Senza Riserva"},{"lot":"110","year":"1974","model":"Porsche 911 Carrera 'Flat-Nose' Widebody Conversion","fullname":"1974 Porsche 911 Carrera 'Flat-Nose' Widebody Conversion","est_min":"75000","est_max":"100000","reserve":"Senza Riserva"},{"lot":"111","year":"1988","model":"Porsche 944 Turbo","fullname":"1988 Porsche 944 Turbo","est_min":"25000","est_max":"30000","reserve":"Senza Riserva"},{"lot":"112","year":"1980","model":"Porsche 924 Turbo ‘Holbert Racing’ Widebody","fullname":"1980 Porsche 924 Turbo ‘Holbert Racing’ Widebody","est_min":"45000","est_max":"50000","reserve":"Senza Riserva"},{"lot":"113","year":"1967","model":"Porsche 911 S","fullname":"1967 Porsche 911 S","est_min":"150000","est_max":"200000","reserve":"Senza Riserva"},{"lot":"114","year":"1987","model":"Porsche 944","fullname":"1987 Porsche 944","est_min":"10000","est_max":"15000","reserve":"Senza Riserva"},{"lot":"115","year":"1976","model":"Porsche 911 Turbo","fullname":"1976 Porsche 911 Turbo","est_min":"175000","est_max":"200000","reserve":"Senza Riserva"},{"lot":"116","year":"2002","model":"Porsche 911 GT2","fullname":"2002 Porsche 911 GT2","est_min":"125000","est_max":"150000","reserve":"Senza Riserva"},{"lot":"117","year":"1968","model":"Porsche 911 Urban Outlaw Starter Kit","fullname":"1968 Porsche 911 Urban Outlaw Starter Kit","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"118","year":"1965","model":"Porsche 912 Coupe Project by Karmann","fullname":"1965 Porsche 912 Coupe Project by Karmann","est_min":"10000","est_max":"15000","reserve":"Senza Riserva"},{"lot":"119","year":"","model":"Porsche Models and Collectibles","fullname":"Porsche Models and Collectibles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"120","year":"","model":"Weber 40IDT3C Carburetors for 1967 Porsche 911 2.0","fullname":"Weber 40IDT3C Carburetors for 1967 Porsche 911 2.0","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"121","year":"","model":"Porsche Door Handles","fullname":"Porsche Door Handles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"122","year":"","model":"Porsche 911 SWB Decklid Grilles","fullname":"Porsche 911 SWB Decklid Grilles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"123","year":"","model":"Porsche Air Conditioning Ducts","fullname":"Porsche Air Conditioning Ducts","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"124","year":"","model":"Pair of Webasto Heater Motors","fullname":"Pair of Webasto Heater Motors","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"125","year":"","model":"Three MOMO Signature Line Leather-Wrapped Steering Wheels for Porsche","fullname":"Three MOMO Signature Line Leather-Wrapped Steering Wheels for Porsche","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"126","year":"","model":"Porsche 911 Bumpers","fullname":"Porsche 911 Bumpers","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"127","year":"","model":"Jägermeister Shot Chiller, Holbert’s Rocks Glasses, and Porsche 934 1:8 Scale Model","fullname":"Jägermeister Shot Chiller, Holbert’s Rocks Glasses, and Porsche 934 1:8 Scale Model","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"128","year":"","model":"Porsche Headlights, Housings, and Trim Bezels","fullname":"Porsche Headlights, Housings, and Trim Bezels","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"129","year":"","model":"Porsche 911 Air Housings","fullname":"Porsche 911 Air Housings","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"130","year":"","model":"Porsche Pistons, Cylinders, and Engine Parts","fullname":"Porsche Pistons, Cylinders, and Engine Parts","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"131","year":"","model":"Porsche 911 Interior Kit","fullname":"Porsche 911 Interior Kit","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"132","year":"","model":"Porsche 911 SWB Decklids","fullname":"Porsche 911 SWB Decklids","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"133","year":"","model":"Porsche Type 901/01 Transaxle for 1971 911","fullname":"Porsche Type 901/01 Transaxle for 1971 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"134","year":"","model":"Weber 40IDA3C Carburetors for 1966 Porsche 911","fullname":"Weber 40IDA3C Carburetors for 1966 Porsche 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"135","year":"","model":"Ten VDO White Index Gauges for 1970-1990 Porsche","fullname":"Ten VDO White Index Gauges for 1970-1990 Porsche","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"136","year":"","model":"Three Pairs of Porsche 'Tombstone' Leatherette Seats","fullname":"Three Pairs of Porsche 'Tombstone' Leatherette Seats","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"137","year":"","model":"Porsche 911 GT3 RS 4.0 Piston Desk Accessories and Carrera RS 2.7 Acrylic Sculpture","fullname":"Porsche 911 GT3 RS 4.0 Piston Desk Accessories and Carrera RS 2.7 Acrylic Sculpture","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"138","year":"","model":"Porsche and Brumos Racing Accessories","fullname":"Porsche and Brumos Racing Accessories","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"139","year":"","model":"Porsche Design and Porsche Classic Accessories and Desk Items","fullname":"Porsche Design and Porsche Classic Accessories and Desk Items","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"140","year":"","model":"Mathe Motor Oil Cans and Signed Gas Pump Handle","fullname":"Mathe Motor Oil Cans and Signed Gas Pump Handle","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"141","year":"","model":"Porsche 919 Hybrid Evo Limited Edition Model, Serial No. 277/300","fullname":"Porsche 919 Hybrid Evo Limited Edition Model, Serial No. 277/300","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"142","year":"","model":"Collection of Hot Wheels, Toys, and Model Cars","fullname":"Collection of Hot Wheels, Toys, and Model Cars","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"143","year":"","model":"Porsche 911 Exhaust Pipes","fullname":"Porsche 911 Exhaust Pipes","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"144","year":"","model":"B.R.M. Union Jack Automatic Wrist Watch","fullname":"B.R.M. Union Jack Automatic Wrist Watch","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"145","year":"","model":"Twelve Porsche Posters","fullname":"Twelve Porsche Posters","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"146","year":"","model":"LEGO Technic Porsche 911 GT3 RS Signed Kit","fullname":"LEGO Technic Porsche 911 GT3 RS Signed Kit","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"147","year":"","model":"\"Porsche 50 Years of 911\" Signed Poster, Features Magnus Walker's \"277\"","fullname":"\"Porsche 50 Years of 911\" Signed Poster, Features Magnus Walker's \"277\"","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"148","year":"","model":"Red Bull Gas Pump Refrigerator","fullname":"Red Bull Gas Pump Refrigerator","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"149","year":"","model":"Mobil Acrylic Letters Sign","fullname":"Mobil Acrylic Letters Sign","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"150","year":"","model":"Ugly Duckling Rent-A-Car Acrylic Sign","fullname":"Ugly Duckling Rent-A-Car Acrylic Sign","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"151","year":"","model":"Collection of Vintage Signs","fullname":"Collection of Vintage Signs","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"152","year":"","model":"Motorcycle Helmets, including Signed Helmet","fullname":"Motorcycle Helmets, including Signed Helmet","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"153","year":"","model":"Two Porsche Wood Rimmed Steering Wheels","fullname":"Two Porsche Wood Rimmed Steering Wheels","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"154","year":"","model":"Two MOMO Indy Wood Rimmed Steering Wheels","fullname":"Two MOMO Indy Wood Rimmed Steering Wheels","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"155","year":"","model":"Porsche 356 C/Early 911 Steering Wheel","fullname":"Porsche 356 C/Early 911 Steering Wheel","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"156","year":"","model":"Four Early Porsche 911/912 Steering Wheels","fullname":"Four Early Porsche 911/912 Steering Wheels","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"157","year":"","model":"Magnus Walker Urban Outlaw Collectibles and Posters","fullname":"Magnus Walker Urban Outlaw Collectibles and Posters","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"158","year":"","model":"Pair of Durasig Traffic Signal Lights","fullname":"Pair of Durasig Traffic Signal Lights","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"159","year":"","model":"Six Modern 16-in. Fuchs-Style Wheels with Tires","fullname":"Six Modern 16-in. Fuchs-Style Wheels with Tires","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"160","year":"","model":"Eight Porsche Wheels for 928 and 968","fullname":"Eight Porsche Wheels for 928 and 968","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"161","year":"","model":"Eight Modern 15-in. Fuchs-Style Wheels with Tires","fullname":"Eight Modern 15-in. Fuchs-Style Wheels with Tires","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"162","year":"","model":"Twelve Assorted Wheels with Tires including Porsche 'Cookie Cutter' and Aftermarket","fullname":"Twelve Assorted Wheels with Tires including Porsche 'Cookie Cutter' and Aftermarket","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"163","year":"","model":"Eight Modern Aftermarket Wheels for Porsche","fullname":"Eight Modern Aftermarket Wheels for Porsche","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"164","year":"","model":"Nine Aftermarket Four-Lug Wheels for Porsche","fullname":"Nine Aftermarket Four-Lug Wheels for Porsche","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"165","year":"","model":"Wrist Watch Collection and Pair of Driving Gloves","fullname":"Wrist Watch Collection and Pair of Driving Gloves","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"166","year":"","model":"Pistons and Cylinders for 1967 Porsche 911 S","fullname":"Pistons and Cylinders for 1967 Porsche 911 S","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"167","year":"","model":"Mahle Pistons and Cylinders for Porsche 911","fullname":"Mahle Pistons and Cylinders for Porsche 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"168","year":"","model":"Porsche 911 Pistons","fullname":"Porsche 911 Pistons","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"169","year":"","model":"Porsche Pistons and Cylinders","fullname":"Porsche Pistons and Cylinders","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"170","year":"","model":"Porsche 924 and 924 Turbo Engine Parts","fullname":"Porsche 924 and 924 Turbo Engine Parts","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"171","year":"","model":"Suspension Parts and Assemblies","fullname":"Suspension Parts and Assemblies","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"172","year":"","model":"Porsche 356 and 911 Chrome Wheel Covers","fullname":"Porsche 356 and 911 Chrome Wheel Covers","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"173","year":"","model":"Porsche 997 Carbon Fiber and Leather Tiptronic Steering Wheel","fullname":"Porsche 997 Carbon Fiber and Leather Tiptronic Steering Wheel","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"174","year":"","model":"Five MOMO Leather-Wrapped Steering Wheels for Porsche","fullname":"Five MOMO Leather-Wrapped Steering Wheels for Porsche","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"175","year":"","model":"Porsche Brake Caliper Cores and Backing Plates","fullname":"Porsche Brake Caliper Cores and Backing Plates","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"176","year":"","model":"Pair of Magnesium Breather Stacks for Porsche Carburetor Assembly","fullname":"Pair of Magnesium Breather Stacks for Porsche Carburetor Assembly","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"177","year":"","model":"Porsche Gearshifts, Pedals, and Parts","fullname":"Porsche Gearshifts, Pedals, and Parts","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"178","year":"","model":"Porsche Taillights and Side Marker Lights","fullname":"Porsche Taillights and Side Marker Lights","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"179","year":"","model":"Porsche Crankshaft and Camshafts","fullname":"Porsche Crankshaft and Camshafts","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"180","year":"","model":"Porsche Connecting Rods","fullname":"Porsche Connecting Rods","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"181","year":"","model":"Porsche 911 1965–1967 Door Handles","fullname":"Porsche 911 1965–1967 Door Handles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"182","year":"","model":"Porsche Mirrors and Wiper Arms","fullname":"Porsche Mirrors and Wiper Arms","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"183","year":"","model":"Porsche Engine Fans and Shrouds","fullname":"Porsche Engine Fans and Shrouds","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"184","year":"","model":"Electronic Control Units","fullname":"Electronic Control Units","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"185","year":"","model":"Porsche Air Cleaners and Covers","fullname":"Porsche Air Cleaners and Covers","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"186","year":"","model":"Steering Wheel Hub Adapters","fullname":"Steering Wheel Hub Adapters","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"187","year":"","model":"Porsche Trim Pieces","fullname":"Porsche Trim Pieces","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"188","year":"","model":"Lug Nuts and Stud Bolts","fullname":"Lug Nuts and Stud Bolts","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"189","year":"","model":"Porsche 911 Hood Hinges","fullname":"Porsche 911 Hood Hinges","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"190","year":"","model":"Assorted Bearings and Brake Parts","fullname":"Assorted Bearings and Brake Parts","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"191","year":"","model":"Assorted Porsche Parts and Accessories","fullname":"Assorted Porsche Parts and Accessories","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"192","year":"","model":"Porsche Tools and Jacks","fullname":"Porsche Tools and Jacks","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"193","year":"","model":"Porsche Steel Wheels","fullname":"Porsche Steel Wheels","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"194","year":"","model":"Assorted Parts and Fasteners","fullname":"Assorted Parts and Fasteners","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"195","year":"","model":"Assorted Parts and Accessories","fullname":"Assorted Parts and Accessories","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"196","year":"","model":"Assorted Seat Belts and Racing Harnesses","fullname":"Assorted Seat Belts and Racing Harnesses","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"197","year":"","model":"Porsche Cylinder Heads with Valves","fullname":"Porsche Cylinder Heads with Valves","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"198","year":"","model":"Five Aftermarket Steering Wheels","fullname":"Five Aftermarket Steering Wheels","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"199","year":"","model":"Four Aftermarket Leather-Wrapped Steering Wheels for Porsche","fullname":"Four Aftermarket Leather-Wrapped Steering Wheels for Porsche","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"200","year":"","model":"Four Aftermarket Steering Wheels for Porsche","fullname":"Four Aftermarket Steering Wheels for Porsche","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"201","year":"","model":"Porsche Wall Decor and Artwork","fullname":"Porsche Wall Decor and Artwork","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"202","year":"","model":"Custom JE Racing Pistons for Early Porsche 911 2.0","fullname":"Custom JE Racing Pistons for Early Porsche 911 2.0","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"203","year":"","model":"Seven VDO White Index Gauges for 1970-1990 Porsche 911","fullname":"Seven VDO White Index Gauges for 1970-1990 Porsche 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"204","year":"","model":"Five Porsche 911 Fan Shrouds","fullname":"Five Porsche 911 Fan Shrouds","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"205","year":"","model":"Porsche 930 Interior Trim","fullname":"Porsche 930 Interior Trim","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"206","year":"","model":"Porsche Oil Tanks and Behr Oil Coolers","fullname":"Porsche Oil Tanks and Behr Oil Coolers","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"207","year":"","model":"Five Ate Brake Calipers for Porsche 911","fullname":"Five Ate Brake Calipers for Porsche 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"208","year":"","model":"Four Ate Brake Calipers for Porsche 911","fullname":"Four Ate Brake Calipers for Porsche 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"209","year":"","model":"Sebro Brake Discs and Posiquiet Pads for Porsche 914","fullname":"Sebro Brake Discs and Posiquiet Pads for Porsche 914","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"210","year":"","model":"Mixed Set of Four Performance Brake Discs for Porsche 911","fullname":"Mixed Set of Four Performance Brake Discs for Porsche 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"211","year":"1979","model":"Porsche 930 Engine Case","fullname":"1979 Porsche 930 Engine Case","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"212","year":"","model":"Porsche Type 901/02 Engine Case for 1966-1967 911 S 2.0","fullname":"Porsche Type 901/02 Engine Case for 1966-1967 911 S 2.0","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"213","year":"","model":"Porsche Type 911/51 Engine Case for US-Market 1972 911 MFI","fullname":"Porsche Type 911/51 Engine Case for US-Market 1972 911 MFI","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"214","year":"","model":"Porsche Models and Collectibles","fullname":"Porsche Models and Collectibles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"215","year":"","model":"Porsche Badges, Wheel Caps, and Accessories","fullname":"Porsche Badges, Wheel Caps, and Accessories","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"216","year":"","model":"Weber 40IDS3C Carburetors for 1967 Porsche 911 S 2.0","fullname":"Weber 40IDS3C Carburetors for 1967 Porsche 911 S 2.0","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"217","year":"","model":"Porsche Models and Collectibles","fullname":"Porsche Models and Collectibles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"218","year":"","model":"Weber 40IDA3C Carburetors","fullname":"Weber 40IDA3C Carburetors","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"219","year":"","model":"Mahle Piston Set for Early Porsche 911 S 2.0","fullname":"Mahle Piston Set for Early Porsche 911 S 2.0","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"220","year":"","model":"Bosch PED6KL MFI Pump for Early Porsche 911","fullname":"Bosch PED6KL MFI Pump for Early Porsche 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"221","year":"","model":"Porsche 996 GT3 Oil Pump Motor","fullname":"Porsche 996 GT3 Oil Pump Motor","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"222","year":"","model":"Rebuilt Brembo Brake Calipers for Porsche 911","fullname":"Rebuilt Brembo Brake Calipers for Porsche 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"223","year":"","model":"Blaupunkt AM/FM Autoradio for Porsche 911","fullname":"Blaupunkt AM/FM Autoradio for Porsche 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"224","year":"","model":"Porsche VDO Gauges 1965–1967","fullname":"Porsche VDO Gauges 1965–1967","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"225","year":"","model":"Two Pairs of Porsche and Pair of Procar Seats","fullname":"Two Pairs of Porsche and Pair of Procar Seats","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"226","year":"","model":"Porsche 996 and Recaro Tan Leather Seats","fullname":"Porsche 996 and Recaro Tan Leather Seats","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"227","year":"","model":"Two Pairs of Porsche 911 LWB Seats","fullname":"Two Pairs of Porsche 911 LWB Seats","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"228","year":"","model":"Two Pairs of Porsche 'Tombstone' Leather Seats","fullname":"Two Pairs of Porsche 'Tombstone' Leather Seats","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"229","year":"","model":"Motorcycle Helmets, including Signed Helmet","fullname":"Motorcycle Helmets, including Signed Helmet","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"230","year":"","model":"Five Porsche Type 931 Transaxles","fullname":"Five Porsche Type 931 Transaxles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"231","year":"","model":"Porsche Type 901/01 Engine for Early 1964 911","fullname":"Porsche Type 901/01 Engine for Early 1964 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"232","year":"","model":"Porsche Type 911/07 Engine for 1970 911 T 2.2","fullname":"Porsche Type 911/07 Engine for 1970 911 T 2.2","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"233","year":"","model":"Porsche Type 911/53 Engine for 911 S 2.4","fullname":"Porsche Type 911/53 Engine for 911 S 2.4","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"234","year":"","model":"Porsche Type 901/38 Engine for 914/6","fullname":"Porsche Type 901/38 Engine for 914/6","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"235","year":"","model":"Later Porsche Parts","fullname":"Later Porsche Parts","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"236","year":"","model":"Porsche 911 G-Body Aftermarket Suspension Parts","fullname":"Porsche 911 G-Body Aftermarket Suspension Parts","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"237","year":"","model":"Porsche Type 902/0 Transaxle for 1965-1966 911","fullname":"Porsche Type 902/0 Transaxle for 1965-1966 911","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"238","year":"","model":"Two Pairs of Early Porsche 911 SWB Doors","fullname":"Two Pairs of Early Porsche 911 SWB Doors","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"239","year":"","model":"Assorted Porsche 911 Windshields","fullname":"Assorted Porsche 911 Windshields","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"240","year":"","model":"Porsche 911 Steel Bumpers","fullname":"Porsche 911 Steel Bumpers","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"241","year":"","model":"Later Porsche 911 Decklids","fullname":"Later Porsche 911 Decklids","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"242","year":"","model":"Five Porsche 911 'Tail' Decklids","fullname":"Five Porsche 911 'Tail' Decklids","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"243","year":"","model":"Porsche 911 Front Fenders","fullname":"Porsche 911 Front Fenders","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"244","year":"","model":"Porsche 911 R Aftermarket Fiberglass Kit","fullname":"Porsche 911 R Aftermarket Fiberglass Kit","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"245","year":"","model":"Porsche Doors and Early 911 Hood","fullname":"Porsche Doors and Early 911 Hood","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"246","year":"","model":"Pistons and Liners for Porsche 930 3.0","fullname":"Pistons and Liners for Porsche 930 3.0","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"247","year":"","model":"Four Porsche 911 Dashboards","fullname":"Four Porsche 911 Dashboards","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"248","year":"","model":"Porsche 911 Decklid Grilles","fullname":"Porsche 911 Decklid Grilles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"249","year":"","model":"Porsche 911 Early 1964–1965 High Bar Grille","fullname":"Porsche 911 Early 1964–1965 High Bar Grille","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"250","year":"","model":"Assorted Wheel Spacers","fullname":"Assorted Wheel Spacers","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"251","year":"","model":"Porsche Window Glass","fullname":"Porsche Window Glass","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"252","year":"","model":"Porsche Interior Trim and Upholstery","fullname":"Porsche Interior Trim and Upholstery","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"253","year":"","model":"Jaguar D-Type Sculpture and E-Type Steering Wheel","fullname":"Jaguar D-Type Sculpture and E-Type Steering Wheel","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"254","year":"","model":"Porsche Engine Sheet Metal","fullname":"Porsche Engine Sheet Metal","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"255","year":"","model":"Porsche 911 G-Body Bumper and Rocker Panels","fullname":"Porsche 911 G-Body Bumper and Rocker Panels","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"256","year":"","model":"Porsche Seat Frames and Brackets","fullname":"Porsche Seat Frames and Brackets","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"257","year":"","model":"Porsche 911 1968–1969 Door Handles","fullname":"Porsche 911 1968–1969 Door Handles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"258","year":"","model":"Porsche 911 Early 1964–1965 Four-Screw Horn Grilles","fullname":"Porsche 911 Early 1964–1965 Four-Screw Horn Grilles","est_min":"","est_max":"","reserve":"Senza Riserva"},{"lot":"259","year":"","model":"Porsche 911 LWB Horn Grilles","fullname":"Porsche 911 LWB Horn Grilles","est_min":"","est_max":"","reserve":"Senza Riserva"}];
+
+// State
+let lots = RAW_LOTS.map(l => ({...l, note:'', target:'', interesse:'', starred:false}));
+let currentTab = 'tutti';
+let currentPage = 1;
+const PAGE_SIZE = 30;
+let editingLot = null;
+
+// UTILS
+function fmtUSD(n){if(!n)return'—';return'$'+Number(n).toLocaleString('en-US');}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+// FILTER
+function filteredLots(){
+  const q=(document.getElementById('search-input').value||'').toLowerCase();
+  const anno=document.getElementById('filt-anno').value;
+  return lots.filter(l=>{
+    const matchQ=`${l.lot} ${l.fullname} ${l.year}`.toLowerCase().includes(q);
+    const matchA=!anno||l.year===anno;
+    const matchTab=currentTab==='tutti'||
+      (currentTab==='auto'&&l.year!=='')||
+      (currentTab==='memo'&&l.year==='')||
+      (currentTab==='starred'&&l.starred);
+    return matchQ&&matchA&&matchTab;
+  });
+}
+
+// RENDER
+function renderTable(){
+  const filtered=filteredLots();
+  const total=filtered.length;
+  const totalPages=Math.ceil(total/PAGE_SIZE)||1;
+  if(currentPage>totalPages)currentPage=1;
+  const start=(currentPage-1)*PAGE_SIZE;
+  const page=filtered.slice(start,start+PAGE_SIZE);
+
+  const tbody=document.getElementById('table-body');
+  if(page.length===0){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:3rem;color:#555">Nessun lotto trovato</td></tr>';renderPager(total,totalPages);return;}
+
+  tbody.innerHTML=page.map(l=>{
+    const isAuto=l.year!=='';
+    const tagHtml=isAuto?`<span class="tag tag-auto">Auto</span>`:`<span class="tag tag-memo">Memo</span>`;
+    const starIcon=l.starred?'★':'☆';
+    const starColor=l.starred?'var(--oro)':'#444';
+    const interIcon=l.interesse?l.interesse.split(' ')[0]:'';
+    return `<tr class="fade-in">
+      <td><span class="lot-num">Lot ${l.lot}</span></td>
+      <td>${tagHtml}</td>
+      <td class="mono">${l.year||'—'}</td>
+      <td style="max-width:320px"><span style="font-size:0.88rem">${l.fullname}</span>${interIcon?`<br><span style="font-size:0.7rem;color:#888">${l.interesse}</span>`:''}</td>
+      <td class="price">${fmtUSD(l.est_min)}</td>
+      <td class="price">${fmtUSD(l.est_max)}</td>
+      <td><span class="tag tag-res">${l.reserve||'—'}</span></td>
+      <td style="max-width:140px"><span style="font-size:0.76rem;color:#888">${l.note?l.note.substring(0,40)+(l.note.length>40?'…':''):l.target?'Target: '+fmtUSD(l.target):''}</span></td>
+      <td style="text-align:center">
+        <button onclick="openDetail('${l.lot}')" style="background:transparent;border:none;color:var(--oro);cursor:pointer;font-size:0.7rem;font-family:'IBM Plex Mono',monospace;margin-right:4px">✎</button>
+        <button onclick="toggleStar('${l.lot}')" style="background:transparent;border:none;color:${starColor};cursor:pointer;font-size:1rem">${starIcon}</button>
+      </td>
+    </tr>`;
+  }).join('');
+  renderPager(total,totalPages);
+  updateKPI();
+}
+
+function renderPager(total,totalPages){
+  const info=`${(currentPage-1)*PAGE_SIZE+1}–${Math.min(currentPage*PAGE_SIZE,total)} di ${total}`;
+  document.getElementById('pager-info').textContent=info;
+  document.getElementById('pager-info2').textContent=info;
+  const html=generatePagerHTML(totalPages);
+  document.getElementById('pager-top').innerHTML=html;
+  document.getElementById('pager-bottom').innerHTML=html;
+}
+
+function generatePagerHTML(totalPages){
+  if(totalPages<=1)return'';
+  let h='';
+  if(currentPage>1)h+=`<button onclick="goPage(${currentPage-1})">‹</button>`;
+  const start=Math.max(1,currentPage-2),end=Math.min(totalPages,currentPage+2);
+  if(start>1){h+=`<button onclick="goPage(1)">1</button>`;if(start>2)h+=`<span style="color:#555;padding:0 4px">…</span>`;}
+  for(let p=start;p<=end;p++)h+=`<button class="${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+  if(end<totalPages){if(end<totalPages-1)h+=`<span style="color:#555;padding:0 4px">…</span>`;h+=`<button onclick="goPage(${totalPages})">${totalPages}</button>`;}
+  if(currentPage<totalPages)h+=`<button onclick="goPage(${currentPage+1})">›</button>`;
+  return h;
+}
+
+function goPage(p){currentPage=p;renderTable();window.scrollTo({top:200,behavior:'smooth'});}
+
+function setTab(tab,btn){
+  currentTab=tab;currentPage=1;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const titles={'tutti':'Tutti i Lotti','auto':'🚗 Automobili','memo':'📦 Memorabilia & Ricambi','starred':'⭐ Lotti Selezionati'};
+  document.getElementById('section-title').textContent=titles[tab];
+  renderTable();
+}
+
+function updateKPI(){
+  const autos=lots.filter(l=>l.year!=='');
+  const memos=lots.filter(l=>l.year==='');
+  const withEst=lots.filter(l=>l.est_min);
+  const totMin=withEst.reduce((s,l)=>s+Number(l.est_min),0);
+  const totMax=withEst.reduce((s,l)=>s+Number(l.est_max||0),0);
+  document.getElementById('k-tot').textContent=lots.length;
+  document.getElementById('k-auto').textContent=autos.length;
+  document.getElementById('k-memo').textContent=memos.length;
+  document.getElementById('k-min').textContent='$'+Math.round(totMin/1000)+'K';
+  document.getElementById('k-max').textContent='$'+Math.round(totMax/1000)+'K';
+}
+
+function populateYearFilter(){
+  const years=[...new Set(lots.filter(l=>l.year).map(l=>l.year))].sort();
+  const sel=document.getElementById('filt-anno');
+  years.forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;sel.appendChild(o);});
+}
+
+// DETAIL MODAL
+function openDetail(lotNum){
+  const l=lots.find(x=>x.lot===lotNum);
+  if(!l)return;
+  editingLot=lotNum;
+  document.getElementById('detail-title').textContent=`Lot ${l.lot} — ${l.fullname}`;
+  document.getElementById('detail-info').innerHTML=`
+    <div class="info-card"><div class="info-label">Anno</div><div class="info-val">${l.year||'—'}</div></div>
+    <div class="info-card"><div class="info-label">Stima</div><div class="info-val" style="color:var(--oro)">${fmtUSD(l.est_min)} – ${fmtUSD(l.est_max)}</div></div>
+    <div class="info-card"><div class="info-label">Riserva</div><div class="info-val">${l.reserve||'—'}</div></div>`;
+  document.getElementById('edit-note').value=l.note||'';
+  document.getElementById('edit-target').value=l.target||'';
+  document.getElementById('edit-interesse').value=l.interesse||'';
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function closeModal(){document.getElementById('detail-modal').classList.remove('open');editingLot=null;}
+
+function saveLotNote(){
+  const l=lots.find(x=>x.lot===editingLot);
+  if(!l)return;
+  l.note=document.getElementById('edit-note').value;
+  l.target=document.getElementById('edit-target').value;
+  l.interesse=document.getElementById('edit-interesse').value;
+  closeModal();
+  renderTable();
+  toast('✓ Note salvate per Lot '+l.lot);
+}
+
+function toggleStar(lotNum){
+  const l=lots.find(x=>x.lot===lotNum);
+  if(!l)return;
+  l.starred=!l.starred;
+  renderTable();
+  toast(l.starred?`⭐ Lot ${lotNum} aggiunto ai selezionati`:`Lot ${lotNum} rimosso dai selezionati`);
+}
+
+// ADD LOT
+function openAddModal(){document.getElementById('add-modal').classList.add('open');}
+function addLot(){
+  const desc=document.getElementById('new-desc').value.trim();
+  if(!desc){toast('⚠ Inserisci una descrizione');return;}
+  const year=document.getElementById('new-year').value;
+  const yearMatch=year||(desc.match(/^((19|20)\d{2})/)||[])[0]||'';
+  const newL={
+    lot:document.getElementById('new-lot').value||String(lots.length+100),
+    year:yearMatch,
+    model:desc,fullname:desc,
+    est_min:document.getElementById('new-min').value,
+    est_max:document.getElementById('new-max').value,
+    reserve:'',
+    note:document.getElementById('new-note').value,
+    target:'',interesse:'',starred:false
+  };
+  lots.unshift(newL);
+  document.getElementById('add-modal').classList.remove('open');
+  ['new-lot','new-year','new-desc','new-min','new-max','new-note'].forEach(id=>document.getElementById(id).value='');
+  renderTable();
+  toast('✓ Lotto aggiunto');
+}
+
+// INIT
+populateYearFilter();
+renderTable();
+</script>
+</body>
+</html>
