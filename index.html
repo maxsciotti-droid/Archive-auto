@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro Auto Storiche & Collezionistiche</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --nero: #0d0d0d;
+    --oro: #c8a45a;
+    --oro-chiaro: #e8c97a;
+    --crema: #f5efe3;
+    --grigio-scuro: #1a1a1a;
+    --grigio-medio: #2e2e2e;
+    --grigio-testo: #888;
+    --rosso: #c0392b;
+    --verde: #27ae60;
+    --blu: #2471a3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--nero);
+    color: var(--crema);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, var(--grigio-scuro) 0%, #111 100%);
+    border-bottom: 1px solid var(--oro);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--oro);
+    letter-spacing: 0.05em;
+  }
+
+  .logo span {
+    font-weight: 300;
+    color: var(--crema);
+    font-size: 0.85rem;
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  nav {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  nav button {
+    background: transparent;
+    border: none;
+    color: var(--grigio-testo);
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  nav button:hover, nav button.active {
+    color: var(--oro);
+    border-bottom-color: var(--oro);
+  }
+
+  /* LAYOUT */
+  .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+
+  /* DASHBOARD */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .kpi {
+    background: var(--grigio-scuro);
+    border: 1px solid #333;
+    border-top: 3px solid var(--oro);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 80px;
+    background: var(--oro);
+    opacity: 0.04;
+    border-radius: 50%;
+    transform: translate(20px, -20px);
+  }
+
+  .kpi-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--grigio-testo);
+    margin-bottom: 0.5rem;
+  }
+
+  .kpi-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--oro);
+    line-height: 1;
+  }
+
+  .kpi-sub {
+    font-size: 0.75rem;
+    color: var(--grigio-testo);
+    margin-top: 0.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* SEZIONI */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--oro);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--oro), transparent);
+    opacity: 0.4;
+  }
+
+  /* TOOLBAR */
+  .toolbar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    background: var(--grigio-scuro);
+    border: 1px solid #333;
+    color: var(--crema);
+    padding: 0.6rem 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    width: 280px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus { border-color: var(--oro); }
+  .search-box::placeholder { color: #444; }
+
+  select.filter-sel {
+    background: var(--grigio-scuro);
+    border: 1px solid #333;
+    color: var(--crema);
+    padding: 0.6rem 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* BUTTONS */
+  .btn {
+    padding: 0.6rem 1.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border: none;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .btn-gold {
+    background: var(--oro);
+    color: var(--nero);
+    font-weight: 500;
+  }
+
+  .btn-gold:hover { background: var(--oro-chiaro); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--oro);
+    border: 1px solid var(--oro);
+  }
+
+  .btn-outline:hover { background: var(--oro); color: var(--nero); }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--rosso);
+    border: 1px solid var(--rosso);
+    font-size: 0.72rem;
+    padding: 0.35rem 0.8rem;
+  }
+
+  .btn-danger:hover { background: var(--rosso); color: white; }
+
+  .btn-sm {
+    padding: 0.35rem 0.8rem;
+    font-size: 0.72rem;
+  }
+
+  /* TABELLA */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid #2a2a2a;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  thead tr {
+    background: var(--grigio-scuro);
+    border-bottom: 2px solid var(--oro);
+  }
+
+  th {
+    padding: 0.9rem 1rem;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--oro);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #222;
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: rgba(200, 164, 90, 0.05); }
+
+  td {
+    padding: 0.8rem 1rem;
+    color: var(--crema);
+    font-family: 'IBM Plex Sans', sans-serif;
+    vertical-align: middle;
+  }
+
+  td.mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    color: #aaa;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 2px;
+  }
+
+  .tag-magazzino { background: rgba(39,174,96,0.15); color: #5ddb8f; border: 1px solid rgba(39,174,96,0.3); }
+  .tag-venduto { background: rgba(192,57,43,0.15); color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); }
+  .tag-asta { background: rgba(200,164,90,0.15); color: var(--oro); border: 1px solid rgba(200,164,90,0.3); }
+  .tag-ricerca { background: rgba(36,113,163,0.15); color: #5dade2; border: 1px solid rgba(36,113,163,0.3); }
+
+  .td-actions { display: flex; gap: 0.4rem; align-items: center; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--grigio-scuro);
+    border: 1px solid var(--oro);
+    width: 100%;
+    max-width: 780px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .modal-header {
+    background: #111;
+    padding: 1.2rem 1.8rem;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--oro);
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--grigio-testo);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover { color: var(--crema); }
+
+  .modal-body { padding: 1.8rem; }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--oro);
+  }
+
+  input, textarea, select {
+    background: #111;
+    border: 1px solid #333;
+    color: var(--crema);
+    padding: 0.65rem 0.9rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  input:focus, textarea:focus, select:focus { border-color: var(--oro); }
+  input::placeholder, textarea::placeholder { color: #444; }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .modal-footer {
+    padding: 1rem 1.8rem;
+    border-top: 1px solid #333;
+    display: flex;
+    gap: 0.8rem;
+    justify-content: flex-end;
+    background: #111;
+    position: sticky;
+    bottom: 0;
+  }
+
+  /* DETTAGLIO VEICOLO */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .detail-item {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    padding: 1rem;
+  }
+
+  .detail-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grigio-testo);
+    margin-bottom: 0.3rem;
+  }
+
+  .detail-value {
+    font-size: 0.95rem;
+    color: var(--crema);
+    font-weight: 500;
+  }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--grigio-testo);
+  }
+
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+
+  /* QUOTAZIONI */
+  .quotazione-card {
+    background: var(--grigio-scuro);
+    border: 1px solid #2a2a2a;
+    border-left: 3px solid var(--oro);
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .q-title { font-weight: 500; font-size: 0.95rem; }
+  .q-sub { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--grigio-testo); margin-top: 0.2rem; }
+  .q-val { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--oro); }
+  .q-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; text-transform: uppercase; color: var(--grigio-testo); }
+
+  /* ASTE */
+  .asta-card {
+    background: var(--grigio-scuro);
+    border: 1px solid #2a2a2a;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+    display: grid;
+    grid-template-columns: 2fr 1.4fr 1fr 1fr 1fr auto;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  /* ANIMAZIONE */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in { animation: fadeIn 0.3s ease; }
+
+  /* NOTIFICA */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--oro);
+    color: var(--nero);
+    padding: 0.8rem 1.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .dashboard-grid { grid-template-columns: 1fr 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    nav button span { display: none; }
+    .asta-card, .quotazione-card { grid-template-columns: 1fr; }
+  }
+
+  .separator {
+    border: none;
+    border-top: 1px solid #222;
+    margin: 2rem 0;
+  }
+
+  .price-highlight {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--oro);
+  }
+
+  /* LOGIN */
+  #login-screen {
+    position: fixed; inset: 0; background: var(--nero);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; flex-direction: column; gap: 0;
+  }
+  #login-screen.hidden { display: none; }
+  .login-box {
+    background: var(--grigio-scuro);
+    border: 1px solid var(--oro);
+    padding: 3rem 3.5rem;
+    max-width: 420px; width: 90%;
+    text-align: center;
+  }
+  .login-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--oro); margin-bottom: 0.3rem;
+  }
+  .login-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem; color: #666;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    margin-bottom: 2.5rem;
+  }
+  .login-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem; color: #888;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    text-align: left; display: block; margin-bottom: 0.5rem;
+  }
+  .login-input {
+    width: 100%; background: #111; border: 1px solid #333;
+    color: var(--crema); padding: 0.8rem 1rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.95rem;
+    margin-bottom: 1.5rem; outline: none;
+    transition: border-color 0.2s;
+  }
+  .login-input:focus { border-color: var(--oro); }
+  .login-btn {
+    width: 100%; background: var(--oro); color: var(--nero);
+    border: none; padding: 0.9rem; cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+    transition: background 0.2s;
+  }
+  .login-btn:hover { background: var(--oro-chiaro); }
+  .login-err {
+    color: #e74c3c; font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem; margin-top: 0.8rem; display: none;
+  }
+  .login-hint {
+    margin-top: 1.5rem; font-size: 0.7rem; color: #444;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<!-- SCHERMATA LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Registro Storico</div>
+    <div class="login-sub">Accesso Riservato</div>
+    <label class="login-label">Password</label>
+    <input class="login-input" type="password" id="login-pwd" placeholder="••••••••••••"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">Accedi</button>
+    <div class="login-err" id="login-err">Password errata. Riprovare.</div>
+    <div class="login-hint">Accesso protetto · Registro privato</div>
+  </div>
+</div>
+
+<header style="display:none" id="app-header">
+  <div class="logo">
+    Registro Storico
+    <span>Automobili di Interesse Storico e Collezionistico</span>
+  </div>
+  <div style="background:rgba(200,164,90,0.12);border:1px solid rgba(200,164,90,0.3);padding:0.3rem 1rem;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--oro);letter-spacing:0.1em;" id="save-banner">
+    ✓ 46 VEICOLI IMPORTATI — MW26 Magnus Walker + MC26 Monaco · USD / EUR / GBP
+  </div>
+  <nav>
+    <button class="active" onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('veicoli')">Veicoli</button>
+    <button onclick="showSection('transazioni')">Vendite / Acquisti</button>
+    <button onclick="showSection('aste')">Aste</button>
+    <button onclick="showSection('quotazioni')">Quotazioni</button>
+    <button onclick="showSection('database')">💾 Database</button>
+  </nav>
+</header>
+
+<div class="container" style="display:none" id="app-container">
+
+  <!-- DASHBOARD -->
+  <div class="section active" id="s-dashboard">
+    <div class="section-title" style="margin-top:1rem">Panoramica</div>
+    <div class="dashboard-grid" id="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Veicoli in Archivio</div>
+        <div class="kpi-value" id="kpi-tot">0</div>
+        <div class="kpi-sub">Totale schede inserite</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">In Magazzino</div>
+        <div class="kpi-value" id="kpi-mag">0</div>
+        <div class="kpi-sub">Disponibili</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Volume Transazioni</div>
+        <div class="kpi-value" id="kpi-vol">€ 0</div>
+        <div class="kpi-sub">Totale acquisti + vendite</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Aste Registrate</div>
+        <div class="kpi-value" id="kpi-aste">0</div>
+        <div class="kpi-sub">Partecipazioni e provenienze</div>
+      </div>
+    </div>
+
+    <div class="section-title">Ultimi Veicoli Inseriti</div>
+    <div class="table-wrap">
+      <table id="dash-table">
+        <thead><tr>
+          <th>Veicolo</th><th>Anno</th><th>Targa</th><th>Stato</th><th>Valore Stimato</th>
+        </tr></thead>
+        <tbody id="dash-tbody">
+          <tr><td colspan="5" class="empty">Nessun veicolo inserito</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- VEICOLI -->
+  <div class="section" id="s-veicoli">
+    <div class="section-title">Archivio Veicoli</div>
+    <div class="toolbar">
+      <input class="search-box" type="text" placeholder="Cerca marca, modello, targa…" id="search-veicoli" oninput="renderVeicoli()">
+      <select class="filter-sel" id="filter-stato" onchange="renderVeicoli()">
+        <option value="">Tutti gli stati</option>
+        <option>In Magazzino</option>
+        <option>Venduto</option>
+        <option>In Asta</option>
+        <option>In Ricerca</option>
+      </select>
+      <button class="btn btn-gold" onclick="openModal('modal-veicolo')">+ Nuovo Veicolo</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Marca / Modello</th><th>Anno</th><th>Targa</th><th>Telaio</th>
+          <th>Km</th><th>Stato</th><th>Val. Stimato</th><th>Azioni</th>
+        </tr></thead>
+        <tbody id="veicoli-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TRANSAZIONI -->
+  <div class="section" id="s-transazioni">
+    <div class="section-title">Vendite &amp; Acquisti</div>
+    <div class="toolbar">
+      <input class="search-box" type="text" placeholder="Cerca veicolo, controparte…" id="search-trans" oninput="renderTransazioni()">
+      <select class="filter-sel" id="filter-tipo-trans" onchange="renderTransazioni()">
+        <option value="">Tutti i tipi</option>
+        <option>Acquisto</option>
+        <option>Vendita</option>
+      </select>
+      <button class="btn btn-gold" onclick="openModal('modal-trans')">+ Nuova Transazione</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Data</th><th>Tipo</th><th>Veicolo</th><th>Controparte</th>
+          <th>Prezzo</th><th>Commissioni</th><th>Note</th><th>Azioni</th>
+        </tr></thead>
+        <tbody id="trans-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ASTE -->
+  <div class="section" id="s-aste">
+    <div class="section-title">Registro Aste</div>
+    <div class="toolbar">
+      <input class="search-box" type="text" placeholder="Cerca casa d'aste, veicolo…" id="search-aste" oninput="renderAste()">
+      <button class="btn btn-gold" onclick="openModal('modal-asta')">+ Nuova Asta</button>
+    </div>
+    <div id="aste-list"></div>
+  </div>
+
+
+  <!-- DATABASE -->
+  <div class="section" id="s-database">
+    <div class="section-title">💾 Gestione Database</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:2rem">
+      <div class="kpi" style="border-top-color:#5ddb8f">
+        <div class="kpi-label">Ultimo Salvataggio</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:#5ddb8f;margin-top:0.3rem" id="db-last-save">—</div>
+        <div class="kpi-sub">Auto-save su browser</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Record Totali</div>
+        <div class="kpi-value" id="db-size">—</div>
+        <div class="kpi-sub">Veicoli + Aste + Trans.</div>
+      </div>
+      <div class="kpi" style="border-top-color:#5dade2">
+        <div class="kpi-label">Storage Utilizzato</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:#5dade2;margin-top:0.3rem" id="db-storage-size">—</div>
+        <div class="kpi-sub">localStorage browser</div>
+      </div>
+      <div class="kpi" style="border-top-color:var(--oro)">
+        <div class="kpi-label">Versione Dati Base</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--oro);margin-top:0.3rem" id="db-version">—</div>
+        <div class="kpi-sub" id="db-version-sub">Aggiornamento automatico</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="font-size:1.2rem">💡 Salvataggio Automatico</div>
+    <div style="background:var(--grigio-scuro);border:1px solid #2a2a2a;border-left:3px solid #5ddb8f;padding:1.5rem;margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+        <div>
+          <div style="font-size:0.88rem;margin-bottom:0.4rem">Il database si salva automaticamente nel browser ad ogni modifica.</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:#888">I dati restano anche dopo aver chiuso il browser, finché non svuoti la cache.</div>
+        </div>
+        <div style="display:flex;gap:0.7rem;flex-wrap:wrap;margin-left:auto">
+          <button class="btn btn-gold" onclick="saveToLocalStorage(true)">💾 Salva Ora</button>
+          <button class="btn btn-outline" onclick="loadFromLocalStorage(true)">↺ Ricarica</button>
+          <button class="btn btn-danger" onclick="clearLocalStorage()">✕ Cancella Cache</button>
+        </div>
+      </div>
+      <div id="storage-status" style="margin-top:0.8rem;font-family:'IBM Plex Mono',monospace;font-size:0.73rem;color:#5ddb8f;display:none"></div>
+    </div>
+
+
+    <div class="section-title" style="font-size:1.2rem">☁ Sincronizzazione Dropbox</div>
+    <div style="background:var(--grigio-scuro);border:1px solid #2a2a2a;border-left:3px solid #0061ff;padding:1.5rem;margin-bottom:1.5rem" id="dropbox-panel">
+      <div id="dbx-setup" style="display:none">
+        <div style="font-size:0.88rem;margin-bottom:0.8rem">Inserisci il tuo <strong style="color:var(--oro)">token Dropbox</strong> per abilitare la sincronizzazione automatica.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:#666;margin-bottom:1rem">
+          Il token viene salvato solo nel tuo browser e non è mai visibile nel codice.<br>
+          Ottienilo su: dropbox.com/developers/apps → Settings → Generated access token
+        </div>
+        <div style="display:flex;gap:0.8rem;flex-wrap:wrap">
+          <input type="password" id="dbx-token-input" placeholder="sl.xxxxxxxxxxxxxxxxxx..."
+            style="flex:1;background:#111;border:1px solid #333;color:var(--crema);padding:0.6rem 0.9rem;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;min-width:200px;outline:none"
+            onkeydown="if(event.key==='Enter') saveDropboxToken()">
+          <button class="btn btn-gold" onclick="saveDropboxToken()">💾 Salva Token</button>
+        </div>
+        <div id="dbx-token-status" style="margin-top:0.6rem;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;display:none"></div>
+      </div>
+      <div id="dbx-connected" style="display:none">
+        <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+          <div>
+            <div style="font-size:0.88rem;margin-bottom:0.3rem">
+              <span style="color:#5ddb8f;font-family:'IBM Plex Mono',monospace">● CONNESSO</span>
+              — Sincronizzazione Dropbox attiva
+            </div>
+            <div id="dbx-filepath" style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:#666"></div>
+            <div id="dbx-last-sync" style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:#888;margin-top:0.3rem"></div>
+          </div>
+          <div style="display:flex;gap:0.7rem;flex-wrap:wrap;margin-left:auto">
+            <button class="btn btn-gold" onclick="syncToDropbox(true)">☁ Carica su Dropbox</button>
+            <button class="btn btn-outline" onclick="syncFromDropbox(true)">⬇ Scarica da Dropbox</button>
+            <button class="btn btn-danger" onclick="removeDropboxToken()">✕ Disconnetti</button>
+          </div>
+        </div>
+        <div id="dbx-sync-status" style="margin-top:0.8rem;font-family:'IBM Plex Mono',monospace;font-size:0.73rem;display:none"></div>
+      </div>
+    </div>
+    <div class="section-title" style="font-size:1.2rem">⬇ Esporta Database</div>
+    <div style="background:var(--grigio-scuro);border:1px solid #2a2a2a;border-left:3px solid var(--oro);padding:1.5rem;margin-bottom:1.5rem">
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start">
+        <div style="flex:1;min-width:220px">
+          <div style="font-size:0.88rem;margin-bottom:0.3rem">Scarica una copia completa in formato JSON o CSV.</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:#888">Usa come backup o per trasferire i dati su un altro dispositivo.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.7rem;min-width:200px">
+          <button class="btn btn-gold" onclick="exportJSON()">⬇ Esporta JSON (completo)</button>
+          <button class="btn btn-outline" onclick="exportCSV()">⬇ Esporta CSV (solo veicoli)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="font-size:1.2rem">⬆ Importa Database</div>
+    <div style="background:var(--grigio-scuro);border:1px solid #2a2a2a;border-left:3px solid #5dade2;padding:1.5rem;margin-bottom:1.5rem">
+      <div style="font-size:0.88rem;margin-bottom:1rem">Carica un file JSON esportato in precedenza per ripristinare tutti i dati.</div>
+      <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+        <label style="background:#111;border:1px solid #444;color:var(--crema);padding:0.6rem 1.2rem;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em;display:inline-block;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--oro)'" onmouseout="this.style.borderColor='#444'">
+          📂 Scegli File JSON
+          <input type="file" accept=".json" onchange="importJSON(event)" style="display:none">
+        </label>
+        <span id="import-filename" style="font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:#888">Nessun file selezionato</span>
+      </div>
+      <div id="import-status" style="margin-top:0.8rem;font-family:'IBM Plex Mono',monospace;font-size:0.73rem;display:none"></div>
+      <div style="margin-top:1rem;background:#0d0d0d;border:1px solid #222;padding:0.7rem 1rem;font-size:0.78rem;color:#555">
+        ⚠ L'importazione sovrascrive il database corrente. Esegui prima un'esportazione come backup.
+      </div>
+    </div>
+
+    <div class="section-title" style="font-size:1.2rem;color:#e74c3c">⚠ Zona Pericolosa</div>
+    <div style="background:rgba(192,57,43,0.07);border:1px solid rgba(192,57,43,0.25);padding:1.5rem">
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+        <div>
+          <div style="font-size:0.88rem;margin-bottom:0.3rem">Ripristina i dati iniziali MW26 (solo auto, 19 veicoli).</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:#888">Tutti i dati aggiunti manualmente verranno eliminati irreversibilmente.</div>
+        </div>
+        <button class="btn btn-danger" style="margin-left:auto;padding:0.6rem 1.4rem;font-size:0.8rem" onclick="resetToDefault()">⚠ Reset ai Dati Iniziali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUOTAZIONI -->
+  <div class="section" id="s-quotazioni">
+    <div class="section-title">Quotazioni &amp; Stime</div>
+    <div class="toolbar">
+      <input class="search-box" type="text" placeholder="Cerca veicolo…" id="search-quot" oninput="renderQuotazioni()">
+      <button class="btn btn-gold" onclick="openModal('modal-quot')">+ Nuova Quotazione</button>
+    </div>
+    <div id="quot-list"></div>
+  </div>
+
+</div>
+
+<!-- ===== MODALI ===== -->
+
+<!-- MODAL VEICOLO -->
+<div class="modal-overlay" id="modal-veicolo">
+  <div class="modal fade-in">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-veicolo-title">Nuovo Veicolo</div>
+      <button class="modal-close" onclick="closeModal('modal-veicolo')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Marca *</label>
+          <input type="text" id="v-marca" placeholder="es. Ferrari, Alfa Romeo…">
+        </div>
+        <div class="form-group">
+          <label>Modello *</label>
+          <input type="text" id="v-modello" placeholder="es. 308 GTB, Spider Duetto…">
+        </div>
+        <div class="form-group">
+          <label>Anno di Produzione</label>
+          <input type="number" id="v-anno" placeholder="1967" min="1886" max="2000">
+        </div>
+        <div class="form-group">
+          <label>Targa</label>
+          <input type="text" id="v-targa" placeholder="MI 123456">
+        </div>
+        <div class="form-group">
+          <label>Numero di Telaio (VIN/Chassis)</label>
+          <input type="text" id="v-telaio" placeholder="">
+        </div>
+        <div class="form-group">
+          <label>Numero Motore</label>
+          <input type="text" id="v-motore" placeholder="">
+        </div>
+        <div class="form-group">
+          <label>Chilometraggio</label>
+          <input type="number" id="v-km" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Colore</label>
+          <input type="text" id="v-colore" placeholder="Rosso Corsa, Giallo Fly…">
+        </div>
+        <div class="form-group">
+          <label>Carrozzeria</label>
+          <input type="text" id="v-carr" placeholder="Berlina, Spider, Coupé, Roadster…">
+        </div>
+        <div class="form-group">
+          <label>Alimentazione</label>
+          <select id="v-alim">
+            <option value="">—</option>
+            <option>Benzina</option>
+            <option>Diesel</option>
+            <option>Elettrico</option>
+            <option>Altro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Paese di Origine</label>
+          <input type="text" id="v-paese" placeholder="Italia, Germania, UK…">
+        </div>
+        <div class="form-group">
+          <label>Stato</label>
+          <select id="v-stato">
+            <option>In Magazzino</option>
+            <option>Venduto</option>
+            <option>In Asta</option>
+            <option>In Ricerca</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Valore Stimato (€)</label>
+          <input type="number" id="v-valore" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="v-cat">
+            <option value="">—</option>
+            <option>Pre-guerra</option>
+            <option>Post-guerra</option>
+            <option>Anni '50</option>
+            <option>Anni '60</option>
+            <option>Anni '70</option>
+            <option>Anni '80</option>
+            <option>Anni '90</option>
+            <option>Supercar</option>
+            <option>Da competizione</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Certificazione ASI / FIA / ACI</label>
+          <input type="text" id="v-cert" placeholder="ASI Gold, FIA HTP…">
+        </div>
+        <div class="form-group full">
+          <label>Note / Provenienza</label>
+          <textarea id="v-note" placeholder="Storia del veicolo, restauri, particolarità…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-veicolo')">Annulla</button>
+      <button class="btn btn-gold" onclick="salvaVeicolo()">Salva Veicolo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TRANSAZIONE -->
+<div class="modal-overlay" id="modal-trans">
+  <div class="modal fade-in">
+    <div class="modal-header">
+      <div class="modal-title">Nuova Transazione</div>
+      <button class="modal-close" onclick="closeModal('modal-trans')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Tipo *</label>
+          <select id="t-tipo">
+            <option>Acquisto</option>
+            <option>Vendita</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data *</label>
+          <input type="date" id="t-data">
+        </div>
+        <div class="form-group full">
+          <label>Veicolo *</label>
+          <select id="t-veicolo"></select>
+        </div>
+        <div class="form-group">
+          <label>Controparte (Venditore / Acquirente)</label>
+          <input type="text" id="t-controparte" placeholder="Nome o Ragione Sociale">
+        </div>
+        <div class="form-group">
+          <label>Prezzo (€) *</label>
+          <input type="number" id="t-prezzo" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Commissioni / Spese (€)</label>
+          <input type="number" id="t-comm" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Metodo di Pagamento</label>
+          <select id="t-pagamento">
+            <option value="">—</option>
+            <option>Bonifico Bancario</option>
+            <option>Contanti</option>
+            <option>Assegno</option>
+            <option>Permuta</option>
+            <option>Finanziamento</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Numero Documento</label>
+          <input type="text" id="t-doc" placeholder="Fattura, contratto…">
+        </div>
+        <div class="form-group full">
+          <label>Note</label>
+          <textarea id="t-note" placeholder="Dettagli aggiuntivi…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-trans')">Annulla</button>
+      <button class="btn btn-gold" onclick="salvaTransazione()">Salva Transazione</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ASTA -->
+<div class="modal-overlay" id="modal-asta">
+  <div class="modal fade-in">
+    <div class="modal-header">
+      <div class="modal-title">Registra Asta</div>
+      <button class="modal-close" onclick="closeModal('modal-asta')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Casa d'Aste *</label>
+          <input type="text" id="a-casa" placeholder="RM Sotheby's, Bonhams, Artcurial…">
+        </div>
+        <div class="form-group">
+          <label>Data Asta *</label>
+          <input type="date" id="a-data">
+        </div>
+        <div class="form-group">
+          <label>Sede / Luogo</label>
+          <input type="text" id="a-luogo" placeholder="Maranello, Monaco, Londra…">
+        </div>
+        <div class="form-group">
+          <label>Numero Lotto</label>
+          <input type="text" id="a-lotto" placeholder="es. 127">
+        </div>
+        <div class="form-group full">
+          <label>Veicolo</label>
+          <select id="a-veicolo"></select>
+        </div>
+        <div class="form-group">
+          <label>Stima Minima (€)</label>
+          <input type="number" id="a-stima-min" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Stima Massima (€)</label>
+          <input type="number" id="a-stima-max" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Prezzo Aggiudicazione (€)</label>
+          <input type="number" id="a-aggiud" placeholder="0 se non ancora battuta">
+        </div>
+        <div class="form-group">
+          <label>Esito</label>
+          <select id="a-esito">
+            <option value="">—</option>
+            <option>Aggiudicato</option>
+            <option>Non venduto</option>
+            <option>Ritirato</option>
+            <option>In corso</option>
+            <option>Futuro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ruolo</label>
+          <select id="a-ruolo">
+            <option>Provenienza (acquisto da asta)</option>
+            <option>Partecipante (nostra auto in asta)</option>
+            <option>Osservatore / Riferimento</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Note</label>
+          <textarea id="a-note" placeholder="Dettagli, condizioni, lotto speciale…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-asta')">Annulla</button>
+      <button class="btn btn-gold" onclick="salvaAsta()">Salva Asta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL QUOTAZIONE -->
+<div class="modal-overlay" id="modal-quot">
+  <div class="modal fade-in">
+    <div class="modal-header">
+      <div class="modal-title">Nuova Quotazione / Stima</div>
+      <button class="modal-close" onclick="closeModal('modal-quot')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Veicolo *</label>
+          <select id="q-veicolo"></select>
+        </div>
+        <div class="form-group">
+          <label>Data Stima *</label>
+          <input type="date" id="q-data">
+        </div>
+        <div class="form-group">
+          <label>Fonte / Perito</label>
+          <input type="text" id="q-fonte" placeholder="ASI, perito, casa d'aste…">
+        </div>
+        <div class="form-group">
+          <label>Valore Minimo (€)</label>
+          <input type="number" id="q-min" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Valore Massimo (€)</label>
+          <input type="number" id="q-max" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Valore Medio / Perizia (€)</label>
+          <input type="number" id="q-medio" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Condizione Rilevata</label>
+          <select id="q-cond">
+            <option value="">—</option>
+            <option>Concorso (1)</option>
+            <option>Eccellente (2)</option>
+            <option>Buona (3)</option>
+            <option>Da restaurare (4)</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Note / Osservazioni</label>
+          <textarea id="q-note" placeholder="Motivazioni della stima, comparables utilizzati…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-quot')">Annulla</button>
+      <button class="btn btn-gold" onclick="salvaQuotazione()">Salva Quotazione</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATABASE IN MEMORIA =====
+// ===== DATI PRE-CARICATI: RM Sotheby's MW26 Magnus Walker (solo auto) =====
+// Tassi di cambio: 1 USD = 0.92 EUR = 0.79 GBP
+const _MW26 = {"veicoli":[{"id":1,"marca":"Porsche","modello":"924 Turbo","anno":"1980","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"23000","cat":"Anni '80","cert":"","note":"RM Sotheby's MW26 · Lot 101 · USD $20000-$25000 · EUR €18400-€23000 · GBP £15800-£19750"},{"id":2,"marca":"Porsche","modello":"911 GT3","anno":"2004","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"115000","cat":"Anni '00","cert":"","note":"RM Sotheby's MW26 · Lot 102 · USD $100000-$125000 · EUR €92000-€115000 · GBP £79000-£98750"},{"id":3,"marca":"Porsche","modello":"968","anno":"1995","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"27600","cat":"Anni '90","cert":"","note":"RM Sotheby's MW26 · Lot 103 · USD $25000-$30000 · EUR €23000-€27600 · GBP £19750-£23700"},{"id":4,"marca":"Porsche","modello":"911","anno":"1966","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"138000","cat":"Anni '60","cert":"","note":"RM Sotheby's MW26 · Lot 104 · USD $100000-$150000 · EUR €92000-€138000 · GBP £79000-£118500"},{"id":5,"marca":"Porsche","modello":"928","anno":"1978","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"23000","cat":"Anni '70","cert":"","note":"RM Sotheby's MW26 · Lot 105 · USD $20000-$25000 · EUR €18400-€23000 · GBP £15800-£19750"},{"id":6,"marca":"Porsche","modello":"911","anno":"1965","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"184000","cat":"Anni '60","cert":"","note":"RM Sotheby's MW26 · Lot 106 · USD $150000-$200000 · EUR €138000-€184000 · GBP £118500-£158000"},{"id":7,"marca":"Porsche","modello":"928","anno":"1979","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"13800","cat":"Anni '70","cert":"","note":"RM Sotheby's MW26 · Lot 107 · USD $10000-$15000 · EUR €9200-€13800 · GBP £7900-£11850"},{"id":8,"marca":"Porsche","modello":"968","anno":"1992","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"23000","cat":"Anni '90","cert":"","note":"RM Sotheby's MW26 · Lot 108 · USD $20000-$25000 · EUR €18400-€23000 · GBP £15800-£19750"},{"id":9,"marca":"Porsche","modello":"911 Carrera 2.7 MFI","anno":"1976","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"230000","cat":"Anni '70","cert":"","note":"RM Sotheby's MW26 · Lot 109 · USD $200000-$250000 · EUR €184000-€230000 · GBP £158000-£197500"},{"id":10,"marca":"Porsche","modello":"911 Carrera 'Flat-Nose' Widebody Conversion","anno":"1974","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"92000","cat":"Anni '70","cert":"","note":"RM Sotheby's MW26 · Lot 110 · USD $75000-$100000 · EUR €69000-€92000 · GBP £59250-£79000"},{"id":11,"marca":"Porsche","modello":"944 Turbo","anno":"1988","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"27600","cat":"Anni '80","cert":"","note":"RM Sotheby's MW26 · Lot 111 · USD $25000-$30000 · EUR €23000-€27600 · GBP £19750-£23700"},{"id":12,"marca":"Porsche","modello":"924 Turbo ‘Holbert Racing’ Widebody","anno":"1980","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"46000","cat":"Anni '80","cert":"","note":"RM Sotheby's MW26 · Lot 112 · USD $45000-$50000 · EUR €41400-€46000 · GBP £35550-£39500"},{"id":13,"marca":"Porsche","modello":"911 S","anno":"1967","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"184000","cat":"Anni '60","cert":"","note":"RM Sotheby's MW26 · Lot 113 · USD $150000-$200000 · EUR €138000-€184000 · GBP £118500-£158000"},{"id":14,"marca":"Porsche","modello":"944","anno":"1987","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"13800","cat":"Anni '80","cert":"","note":"RM Sotheby's MW26 · Lot 114 · USD $10000-$15000 · EUR €9200-€13800 · GBP £7900-£11850"},{"id":15,"marca":"Porsche","modello":"911 Turbo","anno":"1976","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"184000","cat":"Anni '70","cert":"","note":"RM Sotheby's MW26 · Lot 115 · USD $175000-$200000 · EUR €161000-€184000 · GBP £138250-£158000"},{"id":16,"marca":"Porsche","modello":"911 GT2","anno":"2002","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"138000","cat":"Anni '00","cert":"","note":"RM Sotheby's MW26 · Lot 116 · USD $125000-$150000 · EUR €115000-€138000 · GBP £98750-£118500"},{"id":17,"marca":"Porsche","modello":"911 Urban Outlaw Starter Kit","anno":"1968","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"","cat":"Anni '60","cert":"","note":"RM Sotheby's MW26 · Lot 117 · USD $?-$? · EUR €?-€? · GBP £?-£?"},{"id":18,"marca":"Porsche","modello":"912 Coupe Project by Karmann","anno":"1965","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"13800","cat":"Anni '60","cert":"","note":"RM Sotheby's MW26 · Lot 118 · USD $10000-$15000 · EUR €9200-€13800 · GBP £7900-£11850"},{"id":19,"marca":"Porsche","modello":"930 Engine Case","anno":"1979","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"Germania","stato":"In Asta","valore":"","cat":"Anni '70","cert":"","note":"RM Sotheby's MW26 · Lot 211 · USD $?-$? · EUR €?-€? · GBP £?-£?"}],"aste":[{"id":1,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"101","veicoloId":"1","stimaMin":"18400","stimaMax":"23000","stimaMinUSD":"20000","stimaMaxUSD":"25000","stimaMinGBP":"15800","stimaMaxGBP":"19750","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1980 Porsche 924 Turbo · Senza Riserva"},{"id":2,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"102","veicoloId":"2","stimaMin":"92000","stimaMax":"115000","stimaMinUSD":"100000","stimaMaxUSD":"125000","stimaMinGBP":"79000","stimaMaxGBP":"98750","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2004 Porsche 911 GT3 · Senza Riserva"},{"id":3,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"103","veicoloId":"3","stimaMin":"23000","stimaMax":"27600","stimaMinUSD":"25000","stimaMaxUSD":"30000","stimaMinGBP":"19750","stimaMaxGBP":"23700","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1995 Porsche 968 · Senza Riserva"},{"id":4,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"104","veicoloId":"4","stimaMin":"92000","stimaMax":"138000","stimaMinUSD":"100000","stimaMaxUSD":"150000","stimaMinGBP":"79000","stimaMaxGBP":"118500","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1966 Porsche 911 · Senza Riserva"},{"id":5,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"105","veicoloId":"5","stimaMin":"18400","stimaMax":"23000","stimaMinUSD":"20000","stimaMaxUSD":"25000","stimaMinGBP":"15800","stimaMaxGBP":"19750","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1978 Porsche 928 · Senza Riserva"},{"id":6,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"106","veicoloId":"6","stimaMin":"138000","stimaMax":"184000","stimaMinUSD":"150000","stimaMaxUSD":"200000","stimaMinGBP":"118500","stimaMaxGBP":"158000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1965 Porsche 911 · Senza Riserva"},{"id":7,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"107","veicoloId":"7","stimaMin":"9200","stimaMax":"13800","stimaMinUSD":"10000","stimaMaxUSD":"15000","stimaMinGBP":"7900","stimaMaxGBP":"11850","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1979 Porsche 928 · Senza Riserva"},{"id":8,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"108","veicoloId":"8","stimaMin":"18400","stimaMax":"23000","stimaMinUSD":"20000","stimaMaxUSD":"25000","stimaMinGBP":"15800","stimaMaxGBP":"19750","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1992 Porsche 968 · Senza Riserva"},{"id":9,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"109","veicoloId":"9","stimaMin":"184000","stimaMax":"230000","stimaMinUSD":"200000","stimaMaxUSD":"250000","stimaMinGBP":"158000","stimaMaxGBP":"197500","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1976 Porsche 911 Carrera 2.7 MFI · Senza Riserva"},{"id":10,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"110","veicoloId":"10","stimaMin":"69000","stimaMax":"92000","stimaMinUSD":"75000","stimaMaxUSD":"100000","stimaMinGBP":"59250","stimaMaxGBP":"79000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1974 Porsche 911 Carrera 'Flat-Nose' Widebody Conversion · Senza Riserva"},{"id":11,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"111","veicoloId":"11","stimaMin":"23000","stimaMax":"27600","stimaMinUSD":"25000","stimaMaxUSD":"30000","stimaMinGBP":"19750","stimaMaxGBP":"23700","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1988 Porsche 944 Turbo · Senza Riserva"},{"id":12,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"112","veicoloId":"12","stimaMin":"41400","stimaMax":"46000","stimaMinUSD":"45000","stimaMaxUSD":"50000","stimaMinGBP":"35550","stimaMaxGBP":"39500","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1980 Porsche 924 Turbo ‘Holbert Racing’ Widebody · Senza Riserva"},{"id":13,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"113","veicoloId":"13","stimaMin":"138000","stimaMax":"184000","stimaMinUSD":"150000","stimaMaxUSD":"200000","stimaMinGBP":"118500","stimaMaxGBP":"158000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1967 Porsche 911 S · Senza Riserva"},{"id":14,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"114","veicoloId":"14","stimaMin":"9200","stimaMax":"13800","stimaMinUSD":"10000","stimaMaxUSD":"15000","stimaMinGBP":"7900","stimaMaxGBP":"11850","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1987 Porsche 944 · Senza Riserva"},{"id":15,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"115","veicoloId":"15","stimaMin":"161000","stimaMax":"184000","stimaMinUSD":"175000","stimaMaxUSD":"200000","stimaMinGBP":"138250","stimaMaxGBP":"158000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1976 Porsche 911 Turbo · Senza Riserva"},{"id":16,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"116","veicoloId":"16","stimaMin":"115000","stimaMax":"138000","stimaMinUSD":"125000","stimaMaxUSD":"150000","stimaMinGBP":"98750","stimaMaxGBP":"118500","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2002 Porsche 911 GT2 · Senza Riserva"},{"id":17,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"117","veicoloId":"17","stimaMin":"","stimaMax":"","stimaMinUSD":"","stimaMaxUSD":"","stimaMinGBP":"","stimaMaxGBP":"","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1968 Porsche 911 Urban Outlaw Starter Kit · Senza Riserva"},{"id":18,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"118","veicoloId":"18","stimaMin":"9200","stimaMax":"13800","stimaMinUSD":"10000","stimaMaxUSD":"15000","stimaMinGBP":"7900","stimaMaxGBP":"11850","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1965 Porsche 912 Coupe Project by Karmann · Senza Riserva"},{"id":19,"casa":"RM Sotheby's","data":"2026-03-18","luogo":"Online / Los Angeles","lotto":"211","veicoloId":"19","stimaMin":"","stimaMax":"","stimaMinUSD":"","stimaMaxUSD":"","stimaMinGBP":"","stimaMaxGBP":"","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1979 Porsche 930 Engine Case · Senza Riserva"}],"nextV":20,"nextA":20,"rates":{"USD_EUR":0.92,"USD_GBP":0.79}};
+
+const _MC26 = {"veicoli":[{"id":20,"marca":"Ferrari","modello":"250 GT California Spider by Scaglietti","anno":"1961","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"16500000","cat":"Anni '60","cert":"","note":"RM Sotheby's MC26 Monaco · r0015 · EUR €14,500,000-€16,500,000 · USD $15,805,000-$17,985,000 · GBP £12,470,000-£14,190,000"},{"id":21,"marca":"Ferrari","modello":"FXX-K Evo","anno":"2018","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"5700000","cat":"Anni '10","cert":"","note":"RM Sotheby's MC26 Monaco · r0036 · EUR €5,200,000-€5,700,000 · USD $5,668,000-$6,213,000 · GBP £4,472,000-£4,902,000"},{"id":22,"marca":"Ferrari","modello":"Enzo","anno":"2004","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"5300000","cat":"Anni '00","cert":"","note":"RM Sotheby's MC26 Monaco · r0007 · EUR €4,900,000-€5,300,000 · USD $5,341,000-$5,777,000 · GBP £4,214,000-£4,558,000"},{"id":23,"marca":"Ferrari","modello":"LaFerrari","anno":"2014","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"4500000","cat":"Anni '10","cert":"","note":"RM Sotheby's MC26 Monaco · r0025 · EUR €4,000,000-€4,500,000 · USD $4,360,000-$4,905,000 · GBP £3,440,000-£3,870,000"},{"id":24,"marca":"Aston","modello":"Martin DB3S","anno":"1955","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"4000000","cat":"Anni '50","cert":"","note":"RM Sotheby's MC26 Monaco · r0002 · EUR €3,000,000-€4,000,000 · USD $3,270,000-$4,360,000 · GBP £2,580,000-£3,440,000"},{"id":25,"marca":"Ferrari","modello":"330 GTS by Pininfarina","anno":"1967","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"1800000","cat":"Anni '60","cert":"","note":"RM Sotheby's MC26 Monaco · r0040 · EUR €1,400,000-€1,800,000 · USD $1,526,000-$1,962,000 · GBP £1,204,000-£1,548,000"},{"id":26,"marca":"Ferrari","modello":"488 GTE Evo","anno":"2020","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"1600000","cat":"Anni '20","cert":"","note":"RM Sotheby's MC26 Monaco · r0033 · EUR €1,300,000-€1,600,000 · USD $1,417,000-$1,744,000 · GBP £1,118,000-£1,376,000"},{"id":27,"marca":"Lamborghini","modello":"Essenza SCV12","anno":"2022","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"1800000","cat":"Anni '20","cert":"","note":"RM Sotheby's MC26 Monaco · r0035 · EUR €1,200,000-€1,800,000 · USD $1,308,000-$1,962,000 · GBP £1,032,000-£1,548,000"},{"id":28,"marca":"Ferrari","modello":"Testarossa Pininfarina Spider","anno":"1988","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"1500000","cat":"Anni '80","cert":"","note":"RM Sotheby's MC26 Monaco · r0017 · EUR €1,200,000-€1,500,000 · USD $1,308,000-$1,635,000 · GBP £1,032,000-£1,290,000"},{"id":29,"marca":"Ferrari","modello":"458 Speciale A","anno":"2015","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"1100000","cat":"Anni '10","cert":"","note":"RM Sotheby's MC26 Monaco · r0011 · EUR €900,000-€1,100,000 · USD $981,000-$1,199,000 · GBP £774,000-£946,000"},{"id":30,"marca":"Ferrari","modello":"488 Pista 'Piloti Ferrari'","anno":"2019","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"900000","cat":"Anni '10","cert":"","note":"RM Sotheby's MC26 Monaco · r0013 · EUR €700,000-€900,000 · USD $763,000-$981,000 · GBP £602,000-£774,000"},{"id":31,"marca":"Lamborghini","modello":"Aventador SVJ","anno":"2020","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"650000","cat":"Anni '20","cert":"","note":"RM Sotheby's MC26 Monaco · r0012 · EUR €550,000-€650,000 · USD $599,500-$708,500 · GBP £473,000-£559,000"},{"id":32,"marca":"Fittipaldi","modello":"F6/A","anno":"1979","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"700000","cat":"Anni '70","cert":"","note":"RM Sotheby's MC26 Monaco · r0001 · EUR €500,000-€700,000 · USD $545,000-$763,000 · GBP £430,000-£602,000"},{"id":33,"marca":"Ferrari","modello":"458 Speciale","anno":"2015","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"600000","cat":"Anni '10","cert":"","note":"RM Sotheby's MC26 Monaco · r0010 · EUR €500,000-€600,000 · USD $545,000-$654,000 · GBP £430,000-£516,000"},{"id":34,"marca":"Ferrari","modello":"488 Pista","anno":"2019","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"550000","cat":"Anni '10","cert":"","note":"RM Sotheby's MC26 Monaco · r0009 · EUR €450,000-€550,000 · USD $490,500-$599,500 · GBP £387,000-£473,000"},{"id":35,"marca":"Porsche","modello":"911 GT2 RS 'Weissach'","anno":"2018","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"475000","cat":"Anni '10","cert":"","note":"RM Sotheby's MC26 Monaco · r0014 · EUR €425,000-€475,000 · USD $463,250-$517,750 · GBP £365,500-£408,500"},{"id":36,"marca":"Ferrari","modello":"550 Barchetta Pininfarina","anno":"2001","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"450000","cat":"Anni '00","cert":"","note":"RM Sotheby's MC26 Monaco · r0019 · EUR €400,000-€450,000 · USD $436,000-$490,500 · GBP £344,000-£387,000"},{"id":37,"marca":"Ferrari","modello":"296 GTB Assetto Fiorano 'Hungaroring Edition'","anno":"2024","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"500000","cat":"Anni '20","cert":"","note":"RM Sotheby's MC26 Monaco · r0032 · EUR €300,000-€500,000 · USD $327,000-$545,000 · GBP £258,000-£430,000"},{"id":38,"marca":"Ferrari","modello":"430 Scuderia","anno":"2008","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"325000","cat":"Anni '00","cert":"","note":"RM Sotheby's MC26 Monaco · r0044 · EUR €275,000-€325,000 · USD $299,750-$354,250 · GBP £236,500-£279,500"},{"id":39,"marca":"Aston","modello":"Martin DB4 Series I","anno":"1959","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"350000","cat":"Anni '50","cert":"","note":"RM Sotheby's MC26 Monaco · r0004 · EUR €250,000-€350,000 · USD $272,500-$381,500 · GBP £215,000-£301,000"},{"id":40,"marca":"Aston","modello":"Martin DB4 Series IV","anno":"1961","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"350000","cat":"Anni '60","cert":"","note":"RM Sotheby's MC26 Monaco · r0005 · EUR €250,000-€350,000 · USD $272,500-$381,500 · GBP £215,000-£301,000"},{"id":41,"marca":"Ferrari","modello":"Testarossa 'Monospecchio'","anno":"1986","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"350000","cat":"Anni '80","cert":"","note":"RM Sotheby's MC26 Monaco · r0041 · EUR €250,000-€350,000 · USD $272,500-$381,500 · GBP £215,000-£301,000"},{"id":42,"marca":"Ferrari","modello":"488 Spider 'Tailor Made'","anno":"2017","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"320000","cat":"Anni '10","cert":"","note":"RM Sotheby's MC26 Monaco · r0037 · EUR €250,000-€320,000 · USD $272,500-$348,800 · GBP £215,000-£275,200"},{"id":43,"marca":"Lotus","modello":"Type 30","anno":"1964","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"300000","cat":"Anni '60","cert":"","note":"RM Sotheby's MC26 Monaco · r0027 · EUR €200,000-€300,000 · USD $218,000-$327,000 · GBP £172,000-£258,000"},{"id":44,"marca":"WD","modello":"Denzel 1300","anno":"1954","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"220000","cat":"Anni '50","cert":"","note":"RM Sotheby's MC26 Monaco · r0008 · EUR €180,000-€220,000 · USD $196,200-$239,800 · GBP £154,800-£189,200"},{"id":45,"marca":"Alpine-Renault","modello":"A110 1300 G","anno":"1970","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"120000","cat":"Anni '70","cert":"","note":"RM Sotheby's MC26 Monaco · r0042 · EUR €80,000-€120,000 · USD $87,200-$130,800 · GBP £68,800-£103,200"},{"id":46,"marca":"Bentley","modello":"Brooklands","anno":"1996","targa":"","telaio":"","motore":"","km":"","colore":"","carr":"","alim":"Benzina","paese":"N/D","stato":"In Asta","valore":"90000","cat":"Anni '90","cert":"","note":"RM Sotheby's MC26 Monaco · r0006 · EUR €45,000-€90,000 · USD $49,050-$98,100 · GBP £38,700-£77,400"}],"aste":[{"id":20,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0015","veicoloId":"20","stimaMin":"14500000","stimaMax":"16500000","stimaMinUSD":"15805000","stimaMaxUSD":"17985000","stimaMinGBP":"12470000","stimaMaxGBP":"14190000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1961 Ferrari 250 GT California Spider by Scaglietti"},{"id":21,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0036","veicoloId":"21","stimaMin":"5200000","stimaMax":"5700000","stimaMinUSD":"5668000","stimaMaxUSD":"6213000","stimaMinGBP":"4472000","stimaMaxGBP":"4902000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2018 Ferrari FXX-K Evo"},{"id":22,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0007","veicoloId":"22","stimaMin":"4900000","stimaMax":"5300000","stimaMinUSD":"5341000","stimaMaxUSD":"5777000","stimaMinGBP":"4214000","stimaMaxGBP":"4558000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2004 Ferrari Enzo"},{"id":23,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0025","veicoloId":"23","stimaMin":"4000000","stimaMax":"4500000","stimaMinUSD":"4360000","stimaMaxUSD":"4905000","stimaMinGBP":"3440000","stimaMaxGBP":"3870000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2014 Ferrari LaFerrari"},{"id":24,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0002","veicoloId":"24","stimaMin":"3000000","stimaMax":"4000000","stimaMinUSD":"3270000","stimaMaxUSD":"4360000","stimaMinGBP":"2580000","stimaMaxGBP":"3440000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1955 Aston Martin DB3S"},{"id":25,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0040","veicoloId":"25","stimaMin":"1400000","stimaMax":"1800000","stimaMinUSD":"1526000","stimaMaxUSD":"1962000","stimaMinGBP":"1204000","stimaMaxGBP":"1548000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1967 Ferrari 330 GTS by Pininfarina"},{"id":26,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0033","veicoloId":"26","stimaMin":"1300000","stimaMax":"1600000","stimaMinUSD":"1417000","stimaMaxUSD":"1744000","stimaMinGBP":"1118000","stimaMaxGBP":"1376000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2020 Ferrari 488 GTE Evo"},{"id":27,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0035","veicoloId":"27","stimaMin":"1200000","stimaMax":"1800000","stimaMinUSD":"1308000","stimaMaxUSD":"1962000","stimaMinGBP":"1032000","stimaMaxGBP":"1548000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2022 Lamborghini Essenza SCV12"},{"id":28,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0017","veicoloId":"28","stimaMin":"1200000","stimaMax":"1500000","stimaMinUSD":"1308000","stimaMaxUSD":"1635000","stimaMinGBP":"1032000","stimaMaxGBP":"1290000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1988 Ferrari Testarossa Pininfarina Spider"},{"id":29,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0011","veicoloId":"29","stimaMin":"900000","stimaMax":"1100000","stimaMinUSD":"981000","stimaMaxUSD":"1199000","stimaMinGBP":"774000","stimaMaxGBP":"946000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2015 Ferrari 458 Speciale A"},{"id":30,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0013","veicoloId":"30","stimaMin":"700000","stimaMax":"900000","stimaMinUSD":"763000","stimaMaxUSD":"981000","stimaMinGBP":"602000","stimaMaxGBP":"774000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2019 Ferrari 488 Pista 'Piloti Ferrari'"},{"id":31,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0012","veicoloId":"31","stimaMin":"550000","stimaMax":"650000","stimaMinUSD":"599500","stimaMaxUSD":"708500","stimaMinGBP":"473000","stimaMaxGBP":"559000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2020 Lamborghini Aventador SVJ"},{"id":32,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0001","veicoloId":"32","stimaMin":"500000","stimaMax":"700000","stimaMinUSD":"545000","stimaMaxUSD":"763000","stimaMinGBP":"430000","stimaMaxGBP":"602000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1979 Fittipaldi F6/A"},{"id":33,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0010","veicoloId":"33","stimaMin":"500000","stimaMax":"600000","stimaMinUSD":"545000","stimaMaxUSD":"654000","stimaMinGBP":"430000","stimaMaxGBP":"516000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2015 Ferrari 458 Speciale"},{"id":34,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0009","veicoloId":"34","stimaMin":"450000","stimaMax":"550000","stimaMinUSD":"490500","stimaMaxUSD":"599500","stimaMinGBP":"387000","stimaMaxGBP":"473000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2019 Ferrari 488 Pista"},{"id":35,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0014","veicoloId":"35","stimaMin":"425000","stimaMax":"475000","stimaMinUSD":"463250","stimaMaxUSD":"517750","stimaMinGBP":"365500","stimaMaxGBP":"408500","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2018 Porsche 911 GT2 RS 'Weissach'"},{"id":36,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0019","veicoloId":"36","stimaMin":"400000","stimaMax":"450000","stimaMinUSD":"436000","stimaMaxUSD":"490500","stimaMinGBP":"344000","stimaMaxGBP":"387000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2001 Ferrari 550 Barchetta Pininfarina"},{"id":37,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0032","veicoloId":"37","stimaMin":"300000","stimaMax":"500000","stimaMinUSD":"327000","stimaMaxUSD":"545000","stimaMinGBP":"258000","stimaMaxGBP":"430000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2024 Ferrari 296 GTB Assetto Fiorano 'Hungaroring Edition'"},{"id":38,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0044","veicoloId":"38","stimaMin":"275000","stimaMax":"325000","stimaMinUSD":"299750","stimaMaxUSD":"354250","stimaMinGBP":"236500","stimaMaxGBP":"279500","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2008 Ferrari 430 Scuderia"},{"id":39,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0004","veicoloId":"39","stimaMin":"250000","stimaMax":"350000","stimaMinUSD":"272500","stimaMaxUSD":"381500","stimaMinGBP":"215000","stimaMaxGBP":"301000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1959 Aston Martin DB4 Series I"},{"id":40,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0005","veicoloId":"40","stimaMin":"250000","stimaMax":"350000","stimaMinUSD":"272500","stimaMaxUSD":"381500","stimaMinGBP":"215000","stimaMaxGBP":"301000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1961 Aston Martin DB4 Series IV"},{"id":41,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0041","veicoloId":"41","stimaMin":"250000","stimaMax":"350000","stimaMinUSD":"272500","stimaMaxUSD":"381500","stimaMinGBP":"215000","stimaMaxGBP":"301000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1986 Ferrari Testarossa 'Monospecchio'"},{"id":42,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0037","veicoloId":"42","stimaMin":"250000","stimaMax":"320000","stimaMinUSD":"272500","stimaMaxUSD":"348800","stimaMinGBP":"215000","stimaMaxGBP":"275200","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"2017 Ferrari 488 Spider 'Tailor Made'"},{"id":43,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0027","veicoloId":"43","stimaMin":"200000","stimaMax":"300000","stimaMinUSD":"218000","stimaMaxUSD":"327000","stimaMinGBP":"172000","stimaMaxGBP":"258000","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1964 Lotus Type 30"},{"id":44,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0008","veicoloId":"44","stimaMin":"180000","stimaMax":"220000","stimaMinUSD":"196200","stimaMaxUSD":"239800","stimaMinGBP":"154800","stimaMaxGBP":"189200","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1954 WD Denzel 1300"},{"id":45,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0042","veicoloId":"45","stimaMin":"80000","stimaMax":"120000","stimaMinUSD":"87200","stimaMaxUSD":"130800","stimaMinGBP":"68800","stimaMaxGBP":"103200","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1970 Alpine-Renault A110 1300 G"},{"id":46,"casa":"RM Sotheby's","data":"2026-05-09","luogo":"Monaco","lotto":"r0006","veicoloId":"46","stimaMin":"45000","stimaMax":"90000","stimaMinUSD":"49050","stimaMaxUSD":"98100","stimaMinGBP":"38700","stimaMaxGBP":"77400","aggiud":"","esito":"Futuro","ruolo":"Osservatore / Riferimento","note":"1996 Bentley Brooklands"}]};
+
+let DB = {
+  veicoli: [..._MW26.veicoli, ..._MC26.veicoli],
+  transazioni: [],
+  aste: [..._MW26.aste, ..._MC26.aste],
+  quotazioni: [],
+  _nextId: { v: 47, t: 1, a: 47, q: 1 }
+};
+
+let editingId = { veicolo: null };
+
+// ===== UTILITY =====
+function fmt(n) {
+  if (!n && n !== 0) return '—';
+  return '€ ' + Number(n).toLocaleString('it-IT');
+}
+
+function fmtData(d) {
+  if (!d) return '—';
+  const p = d.split('-');
+  return `${p[2]}/${p[1]}/${p[0]}`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'dashboard') updateDashboard();
+  if (id === 'veicoli') renderVeicoli();
+  if (id === 'transazioni') { populateVeicoloSelects(); renderTransazioni(); }
+  if (id === 'aste') { populateVeicoloSelects(); renderAste(); }
+  if (id === 'quotazioni') { populateVeicoloSelects(); renderQuotazioni(); }
+    if (id === 'database') { updateDBStatus(); updateDropboxUI(); }
+}
+
+function openModal(id) {
+  populateVeicoloSelects();
+  document.getElementById(id).classList.add('open');
+  const today = new Date().toISOString().split('T')[0];
+  ['t-data','a-data','q-data'].forEach(f => { const el = document.getElementById(f); if(el && !el.value) el.value = today; });
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  editingId.veicolo = null;
+  document.getElementById('modal-veicolo-title').textContent = 'Nuovo Veicolo';
+}
+
+function populateVeicoloSelects() {
+  ['t-veicolo','a-veicolo','q-veicolo'].forEach(selId => {
+    const sel = document.getElementById(selId);
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Seleziona veicolo —</option>';
+    DB.veicoli.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v.id;
+      opt.textContent = `${v.marca} ${v.modello} (${v.anno || '?'}) — ${v.targa || 'no targa'}`;
+      sel.appendChild(opt);
+    });
+    if (cur) sel.value = cur;
+  });
+}
+
+function getVeicolo(id) {
+  return DB.veicoli.find(v => v.id == id);
+}
+
+function nomeVeicolo(id) {
+  const v = getVeicolo(id);
+  return v ? `${v.marca} ${v.modello} (${v.anno || '?'})` : '—';
+}
+
+function tagStato(s) {
+  const map = {
+    'In Magazzino':'tag-magazzino',
+    'Venduto':'tag-venduto',
+    'In Asta':'tag-asta',
+    'In Ricerca':'tag-ricerca'
+  };
+  return `<span class="tag ${map[s]||''}">${s||'—'}</span>`;
+}
+
+// ===== DASHBOARD =====
+function updateDashboard() {
+  document.getElementById('kpi-tot').textContent = DB.veicoli.length;
+  document.getElementById('kpi-mag').textContent = DB.veicoli.filter(v => v.stato === 'In Magazzino').length;
+  const vol = DB.transazioni.reduce((s,t) => s + (Number(t.prezzo)||0) + (Number(t.comm)||0), 0);
+  document.getElementById('kpi-vol').textContent = '€ ' + vol.toLocaleString('it-IT');
+  document.getElementById('kpi-aste').textContent = DB.aste.length;
+
+  const tbody = document.getElementById('dash-tbody');
+  if (DB.veicoli.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Nessun veicolo inserito ancora</td></tr>';
+    return;
+  }
+  const ultimi = [...DB.veicoli].reverse().slice(0, 8);
+  tbody.innerHTML = ultimi.map(v => `
+    <tr>
+      <td><strong>${v.marca} ${v.modello}</strong></td>
+      <td class="mono">${v.anno || '—'}</td>
+      <td class="mono">${v.targa || '—'}</td>
+      <td>${tagStato(v.stato)}</td>
+      <td class="price-highlight">
+        ${fmt(v.valore)}
+        ${(()=>{ const n=v.note||''; const m=n.match(/USD\s*\$([\d?]+)-\$([\d?]+)/); return m?'<br><span style="font-size:0.68rem;color:#666;font-family:IBM Plex Mono,monospace">'+m[0]+'</span>':''; })()}
+      </td>
+    </tr>`).join('');
+}
+
+// ===== VEICOLI =====
+function salvaVeicolo() {
+  const marca = document.getElementById('v-marca').value.trim();
+  const modello = document.getElementById('v-modello').value.trim();
+  if (!marca || !modello) { showToast('⚠ Marca e Modello sono obbligatori'); return; }
+
+  const obj = {
+    id: editingId.veicolo || DB._nextId.v++,
+    marca, modello,
+    anno: document.getElementById('v-anno').value,
+    targa: document.getElementById('v-targa').value.trim().toUpperCase(),
+    telaio: document.getElementById('v-telaio').value.trim(),
+    motore: document.getElementById('v-motore').value.trim(),
+    km: document.getElementById('v-km').value,
+    colore: document.getElementById('v-colore').value.trim(),
+    carr: document.getElementById('v-carr').value.trim(),
+    alim: document.getElementById('v-alim').value,
+    paese: document.getElementById('v-paese').value.trim(),
+    stato: document.getElementById('v-stato').value,
+    valore: document.getElementById('v-valore').value,
+    cat: document.getElementById('v-cat').value,
+    cert: document.getElementById('v-cert').value.trim(),
+    note: document.getElementById('v-note').value.trim()
+  };
+
+  if (editingId.veicolo) {
+    const idx = DB.veicoli.findIndex(v => v.id == editingId.veicolo);
+    if (idx !== -1) DB.veicoli[idx] = obj;
+    showToast('✓ Veicolo aggiornato');
+  } else {
+    DB.veicoli.push(obj);
+    showToast('✓ Veicolo inserito');
+  }
+
+  closeModal('modal-veicolo');
+  clearVeicoloForm();
+  renderVeicoli();
+  updateDashboard();
+}
+
+function clearVeicoloForm() {
+  ['v-marca','v-modello','v-anno','v-targa','v-telaio','v-motore','v-km','v-colore','v-carr','v-paese','v-cert','v-note','v-valore'].forEach(id => { document.getElementById(id).value = ''; });
+  ['v-alim','v-stato','v-cat'].forEach(id => { const el = document.getElementById(id); el.selectedIndex = 0; });
+}
+
+function editVeicolo(id) {
+  const v = getVeicolo(id);
+  if (!v) return;
+  editingId.veicolo = id;
+  document.getElementById('modal-veicolo-title').textContent = 'Modifica Veicolo';
+  document.getElementById('v-marca').value = v.marca;
+  document.getElementById('v-modello').value = v.modello;
+  document.getElementById('v-anno').value = v.anno;
+  document.getElementById('v-targa').value = v.targa;
+  document.getElementById('v-telaio').value = v.telaio;
+  document.getElementById('v-motore').value = v.motore;
+  document.getElementById('v-km').value = v.km;
+  document.getElementById('v-colore').value = v.colore;
+  document.getElementById('v-carr').value = v.carr;
+  document.getElementById('v-alim').value = v.alim;
+  document.getElementById('v-paese').value = v.paese;
+  document.getElementById('v-stato').value = v.stato;
+  document.getElementById('v-valore').value = v.valore;
+  document.getElementById('v-cat').value = v.cat;
+  document.getElementById('v-cert').value = v.cert;
+  document.getElementById('v-note').value = v.note;
+  openModal('modal-veicolo');
+}
+
+function eliminaVeicolo(id) {
+  if (!confirm('Eliminare definitivamente questo veicolo?')) return;
+  DB.veicoli = DB.veicoli.filter(v => v.id != id);
+  renderVeicoli();
+  updateDashboard();
+  showToast('Veicolo eliminato');
+}
+
+function renderVeicoli() {
+  const q = (document.getElementById('search-veicoli').value || '').toLowerCase();
+  const filtroStato = document.getElementById('filter-stato').value;
+  let lista = DB.veicoli.filter(v => {
+    const match = `${v.marca} ${v.modello} ${v.targa} ${v.telaio}`.toLowerCase().includes(q);
+    const stato = !filtroStato || v.stato === filtroStato;
+    return match && stato;
+  });
+  const tbody = document.getElementById('veicoli-tbody');
+  if (lista.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">Nessun veicolo trovato</td></tr>';
+    return;
+  }
+  tbody.innerHTML = lista.map(v => `
+    <tr>
+      <td><strong>${v.marca}</strong> ${v.modello}${v.cat ? `<br><span style="font-size:0.72rem;color:#888">${v.cat}</span>` : ''}</td>
+      <td class="mono">${v.anno || '—'}</td>
+      <td class="mono">${v.targa || '—'}</td>
+      <td class="mono" style="font-size:0.75rem;max-width:120px;overflow:hidden;text-overflow:ellipsis">${v.telaio || '—'}</td>
+      <td class="mono">${v.km ? Number(v.km).toLocaleString('it-IT') + ' km' : '—'}</td>
+      <td>${tagStato(v.stato)}</td>
+      <td class="price-highlight">
+        ${fmt(v.valore)}
+        ${(()=>{ const n=v.note||''; const m=n.match(/USD\s*\$([\d?]+)-\$([\d?]+)/); return m?'<br><span style="font-size:0.68rem;color:#666;font-family:IBM Plex Mono,monospace">'+m[0]+'</span>':''; })()}
+      </td>
+      <td>
+        <div class="td-actions">
+          <button class="btn btn-outline btn-sm" onclick="editVeicolo(${v.id})">✎ Modifica</button>
+          <button class="btn btn-danger" onclick="eliminaVeicolo(${v.id})">✕</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+// ===== TRANSAZIONI =====
+function salvaTransazione() {
+  const prezzo = document.getElementById('t-prezzo').value;
+  const veicolo = document.getElementById('t-veicolo').value;
+  if (!prezzo || !veicolo) { showToast('⚠ Veicolo e Prezzo sono obbligatori'); return; }
+  DB.transazioni.push({
+    id: DB._nextId.t++,
+    tipo: document.getElementById('t-tipo').value,
+    data: document.getElementById('t-data').value,
+    veicoloId: veicolo,
+    controparte: document.getElementById('t-controparte').value.trim(),
+    prezzo,
+    comm: document.getElementById('t-comm').value,
+    pagamento: document.getElementById('t-pagamento').value,
+    doc: document.getElementById('t-doc').value.trim(),
+    note: document.getElementById('t-note').value.trim()
+  });
+  closeModal('modal-trans');
+  ['t-controparte','t-prezzo','t-comm','t-doc','t-note'].forEach(id => document.getElementById(id).value = '');
+  renderTransazioni();
+  updateDashboard();
+  showToast('✓ Transazione salvata');
+}
+
+function eliminaTrans(id) {
+  if (!confirm('Eliminare questa transazione?')) return;
+  DB.transazioni = DB.transazioni.filter(t => t.id != id);
+  renderTransazioni();
+  updateDashboard();
+}
+
+function renderTransazioni() {
+  const q = (document.getElementById('search-trans').value || '').toLowerCase();
+  const filtroTipo = document.getElementById('filter-tipo-trans').value;
+  let lista = DB.transazioni.filter(t => {
+    const vn = nomeVeicolo(t.veicoloId).toLowerCase();
+    const match = `${vn} ${t.controparte}`.toLowerCase().includes(q);
+    const tipo = !filtroTipo || t.tipo === filtroTipo;
+    return match && tipo;
+  });
+  const tbody = document.getElementById('trans-tbody');
+  if (lista.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">Nessuna transazione registrata</td></tr>';
+    return;
+  }
+  lista = lista.slice().reverse();
+  tbody.innerHTML = lista.map(t => {
+    const tipoCol = t.tipo === 'Acquisto' ? '#5dade2' : '#5ddb8f';
+    return `<tr>
+      <td class="mono">${fmtData(t.data)}</td>
+      <td><span style="color:${tipoCol};font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:0.8rem">${t.tipo}</span></td>
+      <td>${nomeVeicolo(t.veicoloId)}</td>
+      <td>${t.controparte || '—'}</td>
+      <td class="price-highlight">${fmt(t.prezzo)}</td>
+      <td class="mono">${t.comm ? fmt(t.comm) : '—'}</td>
+      <td style="max-width:150px;font-size:0.8rem;color:#aaa">${t.note || '—'}</td>
+      <td><button class="btn btn-danger" onclick="eliminaTrans(${t.id})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== ASTE =====
+function salvaAsta() {
+  const casa = document.getElementById('a-casa').value.trim();
+  if (!casa) { showToast('⚠ La Casa d\'Aste è obbligatoria'); return; }
+  DB.aste.push({
+    id: DB._nextId.a++,
+    casa,
+    data: document.getElementById('a-data').value,
+    luogo: document.getElementById('a-luogo').value.trim(),
+    lotto: document.getElementById('a-lotto').value.trim(),
+    veicoloId: document.getElementById('a-veicolo').value,
+    stimaMin: document.getElementById('a-stima-min').value,
+    stimaMax: document.getElementById('a-stima-max').value,
+    aggiud: document.getElementById('a-aggiud').value,
+    esito: document.getElementById('a-esito').value,
+    ruolo: document.getElementById('a-ruolo').value,
+    note: document.getElementById('a-note').value.trim()
+  });
+  closeModal('modal-asta');
+  renderAste();
+  updateDashboard();
+  showToast('✓ Asta registrata');
+}
+
+function eliminaAsta(id) {
+  if (!confirm('Eliminare questa asta?')) return;
+  DB.aste = DB.aste.filter(a => a.id != id);
+  renderAste();
+  updateDashboard();
+}
+
+function renderAste() {
+  const q = (document.getElementById('search-aste').value || '').toLowerCase();
+  let lista = DB.aste.filter(a =>
+    `${a.casa} ${nomeVeicolo(a.veicoloId)} ${a.luogo}`.toLowerCase().includes(q)
+  );
+  const el = document.getElementById('aste-list');
+  if (lista.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🔨</div>Nessuna asta registrata</div>';
+    return;
+  }
+  const esitoColor = { 'Aggiudicato':'#5ddb8f','Non venduto':'#e74c3c','In corso':var_oro,'Futuro':'#5dade2','Ritirato':'#888' };
+  el.innerHTML = lista.slice().reverse().map(a => `
+    <div class="asta-card fade-in">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--oro)">${a.casa}</div>
+        <div style="font-size:0.8rem;color:#888;margin-top:0.2rem">${a.luogo ? a.luogo + ' · ' : ''}${fmtData(a.data)}${a.lotto ? ' · Lotto ' + a.lotto : ''}</div>
+        <div style="margin-top:0.5rem;font-size:0.85rem">${nomeVeicolo(a.veicoloId)}</div>
+        <div style="font-size:0.72rem;color:#888;margin-top:0.2rem;font-family:'IBM Plex Mono',monospace">${a.ruolo}</div>
+      </div>
+      <div>
+        <div class="q-label">Stima (EUR)</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--crema)">${fmt(a.stimaMin)} – ${fmt(a.stimaMax)}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:#888;margin-top:0.2rem">
+          ${a.stimaMinUSD ? '$ '+Number(a.stimaMinUSD).toLocaleString('en-US')+' – $ '+Number(a.stimaMaxUSD).toLocaleString('en-US')+' USD' : ''}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:#888;margin-top:0.1rem">
+          ${a.stimaMinGBP ? '£ '+Number(a.stimaMinGBP).toLocaleString('en-GB')+' – £ '+Number(a.stimaMaxGBP).toLocaleString('en-GB')+' GBP' : ''}</div>
+      </div>
+      <div>
+        <div class="q-label">Aggiudicazione</div>
+        <div class="q-val">${a.aggiud ? fmt(a.aggiud) : '—'}</div>
+      </div>
+      <div>
+        <div class="q-label">Esito</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:${esitoColor[a.esito]||'#888'};font-weight:500">${a.esito || '—'}</div>
+      </div>
+      <div style="font-size:0.78rem;color:#888;max-width:150px">${a.note || ''}</div>
+      <button class="btn btn-danger" onclick="eliminaAsta(${a.id})">✕</button>
+    </div>`).join('');
+}
+
+// ===== QUOTAZIONI =====
+function salvaQuotazione() {
+  const vId = document.getElementById('q-veicolo').value;
+  if (!vId) { showToast('⚠ Seleziona un veicolo'); return; }
+  DB.quotazioni.push({
+    id: DB._nextId.q++,
+    veicoloId: vId,
+    data: document.getElementById('q-data').value,
+    fonte: document.getElementById('q-fonte').value.trim(),
+    min: document.getElementById('q-min').value,
+    max: document.getElementById('q-max').value,
+    medio: document.getElementById('q-medio').value,
+    cond: document.getElementById('q-cond').value,
+    note: document.getElementById('q-note').value.trim()
+  });
+  closeModal('modal-quot');
+  renderQuotazioni();
+  showToast('✓ Quotazione salvata');
+}
+
+function eliminaQuot(id) {
+  if (!confirm('Eliminare questa quotazione?')) return;
+  DB.quotazioni = DB.quotazioni.filter(q => q.id != id);
+  renderQuotazioni();
+}
+
+function renderQuotazioni() {
+  const q = (document.getElementById('search-quot').value || '').toLowerCase();
+  let lista = DB.quotazioni.filter(qt =>
+    `${nomeVeicolo(qt.veicoloId)} ${qt.fonte}`.toLowerCase().includes(q)
+  );
+  const el = document.getElementById('quot-list');
+  if (lista.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📊</div>Nessuna quotazione registrata</div>';
+    return;
+  }
+  el.innerHTML = lista.slice().reverse().map(qt => `
+    <div class="quotazione-card fade-in">
+      <div>
+        <div class="q-title">${nomeVeicolo(qt.veicoloId)}</div>
+        <div class="q-sub">${qt.fonte || 'Fonte non specificata'} · ${fmtData(qt.data)}${qt.cond ? ' · ' + qt.cond : ''}</div>
+        ${qt.note ? `<div style="font-size:0.78rem;color:#888;margin-top:0.4rem">${qt.note}</div>` : ''}
+      </div>
+      <div>
+        <div class="q-label">Minimo</div>
+        <div class="q-val" style="font-size:1rem">${fmt(qt.min)}</div>
+      </div>
+      <div>
+        <div class="q-label">Massimo</div>
+        <div class="q-val" style="font-size:1rem">${fmt(qt.max)}</div>
+      </div>
+      <div>
+        <div class="q-label">Stima Centrale</div>
+        <div class="q-val">${fmt(qt.medio)}</div>
+      </div>
+      <button class="btn btn-danger" onclick="eliminaQuot(${qt.id})">✕</button>
+    </div>`).join('');
+}
+
+const var_oro = '#c8a45a';
+
+// ===== LOGIN =====
+// ⚠ Per cambiare la password modifica solo la riga qui sotto
+const APP_PASSWORD_HASH = btoa('AutoStoriche2026'); // base64 della password
+
+function doLogin() {
+  const pwd = document.getElementById('login-pwd').value;
+  if (btoa(pwd) === APP_PASSWORD_HASH) {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app-header').style.display = '';
+    document.getElementById('app-container').style.display = '';
+    sessionStorage.setItem('registro_auth', '1');
+    initApp();
+  } else {
+    const err = document.getElementById('login-err');
+    err.style.display = 'block';
+    document.getElementById('login-pwd').value = '';
+    setTimeout(() => err.style.display = 'none', 3000);
+  }
+}
+
+function checkAuth() {
+  if (sessionStorage.getItem('registro_auth') === '1') {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app-header').style.display = '';
+    document.getElementById('app-container').style.display = '';
+    initApp();
+  }
+  // else: login screen remains visible
+}
+
+
+// ===== DROPBOX =====
+const DBX_TOKEN_KEY = 'registro_dbx_token';
+const DBX_FILE = '/registro_auto_storiche/database.json';
+const DBX_API_UPLOAD = 'https://content.dropboxapi.com/2/files/upload';
+const DBX_API_DOWNLOAD = 'https://content.dropboxapi.com/2/files/download';
+
+function getDropboxToken() {
+  return localStorage.getItem(DBX_TOKEN_KEY) || '';
+}
+
+function saveDropboxToken() {
+  const token = document.getElementById('dbx-token-input').value.trim();
+  if (!token) { showDbxTokenStatus('Inserisci un token valido', '#e74c3c'); return; }
+  showDbxTokenStatus('Verifica token in corso…', '#888');
+  // Test the token with a simple API call
+  fetch('https://api.dropboxapi.com/2/users/get_current_account', {
+    method: 'POST', headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: 'null'
+  }).then(r => {
+    if (r.ok) return r.json();
+    throw new Error('Token non valido (status ' + r.status + ')');
+  }).then(data => {
+    localStorage.setItem(DBX_TOKEN_KEY, token);
+    showDbxTokenStatus('✓ Token valido — ' + (data.email || 'Account verificato'), '#5ddb8f');
+    setTimeout(() => updateDropboxUI(), 1000);
+    showToast('☁ Dropbox connesso');
+  }).catch(err => {
+    showDbxTokenStatus('✗ ' + err.message, '#e74c3c');
+  });
+}
+
+function removeDropboxToken() {
+  if (!confirm('Disconnettere Dropbox? I dati locali resteranno invariati.')) return;
+  localStorage.removeItem(DBX_TOKEN_KEY);
+  updateDropboxUI();
+  showToast('Dropbox disconnesso');
+}
+
+function showDbxTokenStatus(msg, color) {
+  const el = document.getElementById('dbx-token-status');
+  if (!el) return;
+  el.textContent = msg; el.style.color = color; el.style.display = 'block';
+}
+
+function showDbxSyncStatus(msg, color) {
+  const el = document.getElementById('dbx-sync-status');
+  if (!el) return;
+  el.textContent = msg; el.style.color = color; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+function updateDropboxUI() {
+  const token = getDropboxToken();
+  const setup = document.getElementById('dbx-setup');
+  const conn = document.getElementById('dbx-connected');
+  if (!setup || !conn) return;
+  if (token) {
+    setup.style.display = 'none';
+    conn.style.display = 'block';
+    const fp = document.getElementById('dbx-filepath');
+    if (fp) fp.textContent = 'File: Dropbox' + DBX_FILE;
+    updateDbxLastSync();
+  } else {
+    setup.style.display = 'block';
+    conn.style.display = 'none';
+  }
+}
+
+function updateDbxLastSync() {
+  const el = document.getElementById('dbx-last-sync');
+  if (!el) return;
+  const ts = localStorage.getItem('registro_dbx_last_sync');
+  el.textContent = ts ? 'Ultima sincronizzazione: ' + ts : 'Nessuna sincronizzazione eseguita';
+}
+
+async function syncToDropbox(showMsg) {
+  const token = getDropboxToken();
+  if (!token) { if (showMsg) showToast('⚠ Dropbox non configurato'); return; }
+  const payload = JSON.stringify({
+    _version: 1, _savedAt: new Date().toISOString(), _app: 'Registro Auto Storiche',
+    veicoli: DB.veicoli, transazioni: DB.transazioni,
+    aste: DB.aste, quotazioni: DB.quotazioni, _nextId: DB._nextId
+  }, null, 2);
+  try {
+    const r = await fetch(DBX_API_UPLOAD, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/octet-stream',
+        'Dropbox-API-Arg': JSON.stringify({ path: DBX_FILE, mode: 'overwrite', autorename: false, mute: true })
+      },
+      body: payload
+    });
+    if (!r.ok) throw new Error('Errore upload: ' + r.status);
+    const now = fmtDateTime(new Date());
+    localStorage.setItem('registro_dbx_last_sync', now);
+    updateDbxLastSync();
+    if (showMsg) { showDbxSyncStatus('✓ Caricato su Dropbox · ' + now, '#5ddb8f'); showToast('☁ Salvato su Dropbox'); }
+  } catch(e) {
+    if (showMsg) { showDbxSyncStatus('✗ Errore: ' + e.message, '#e74c3c'); showToast('✗ Errore Dropbox'); }
+  }
+}
+
+async function syncFromDropbox(showMsg) {
+  const token = getDropboxToken();
+  if (!token) { if (showMsg) showToast('⚠ Dropbox non configurato'); return; }
+  try {
+    const r = await fetch(DBX_API_DOWNLOAD, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Dropbox-API-Arg': JSON.stringify({ path: DBX_FILE }) }
+    });
+    if (r.status === 409) { if (showMsg) showDbxSyncStatus('ℹ Nessun file trovato su Dropbox — sarà creato al primo salvataggio', '#888'); return; }
+    if (!r.ok) throw new Error('Errore download: ' + r.status);
+    const data = await r.json();
+    if (!data.veicoli) throw new Error('File non valido');
+    DB.veicoli = data.veicoli || DB.veicoli;
+    DB.transazioni = data.transazioni || [];
+    DB.aste = data.aste || DB.aste;
+    DB.quotazioni = data.quotazioni || [];
+    DB._nextId = data._nextId || DB._nextId;
+    saveToLocalStorage(false);
+    updateDashboard(); renderVeicoli(); updateDBStatus();
+    const now = fmtDateTime(new Date());
+    localStorage.setItem('registro_dbx_last_sync', now);
+    updateDbxLastSync();
+    if (showMsg) { showDbxSyncStatus('✓ Dati scaricati da Dropbox · ' + now, '#5ddb8f'); showToast('⬇ Dati scaricati da Dropbox'); }
+  } catch(e) {
+    if (showMsg) { showDbxSyncStatus('✗ ' + e.message, '#e74c3c'); }
+  }
+}
+
+// Auto-sync to Dropbox after every save
+const _origAutoSave = autoSave;
+window.autoSave = function() { _origAutoSave(); syncToDropbox(false); };
+
+const LS_KEY = 'registro_auto_storiche_db';
+const LS_META_KEY = 'registro_auto_storiche_meta';
+
+// ===== LOCALSTORAGE =====
+function saveToLocalStorage(showMsg) {
+  try {
+    const payload = JSON.stringify({
+      veicoli: DB.veicoli,
+      transazioni: DB.transazioni,
+      aste: DB.aste,
+      quotazioni: DB.quotazioni,
+      _nextId: DB._nextId
+    });
+    localStorage.setItem(LS_KEY, payload);
+    const now = new Date();
+    const meta = { ts: now.toISOString(), size: payload.length };
+    localStorage.setItem(LS_META_KEY, JSON.stringify(meta));
+    updateDBStatus();
+    if (showMsg) {
+      showStorageStatus('✓ Database salvato — ' + fmtDateTime(now), '#5ddb8f');
+      showToast('💾 Salvato nel browser');
+    }
+  } catch(e) {
+    if (showMsg) showStorageStatus('✗ Errore salvataggio: ' + e.message, '#e74c3c');
+  }
+}
+
+function loadFromLocalStorage(showMsg) {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) { if (showMsg) showStorageStatus('ℹ Nessun dato salvato trovato', '#888'); return false; }
+    const data = JSON.parse(raw);
+    DB.veicoli = data.veicoli || DB.veicoli;
+    DB.transazioni = data.transazioni || [];
+    DB.aste = data.aste || DB.aste;
+    DB.quotazioni = data.quotazioni || [];
+    DB._nextId = data._nextId || DB._nextId;
+    if (showMsg) {
+      showStorageStatus('✓ Database ripristinato dal browser', '#5ddb8f');
+      showToast('↺ Database ripristinato');
+    }
+    updateDashboard(); renderVeicoli();
+    updateDBStatus();
+    return true;
+  } catch(e) {
+    if (showMsg) showStorageStatus('✗ Errore lettura: ' + e.message, '#e74c3c');
+    return false;
+  }
+}
+
+function clearLocalStorage() {
+  if (!confirm('Eliminare il database salvato nel browser? I dati attuali in memoria resteranno invariati.')) return;
+  localStorage.removeItem(LS_KEY);
+  localStorage.removeItem(LS_META_KEY);
+  updateDBStatus();
+  showStorageStatus('✓ Cache browser eliminata', '#888');
+  showToast('Cache eliminata');
+}
+
+function resetToDefault() {
+  if (!confirm('ATTENZIONE: questa operazione eliminerà TUTTI i dati aggiunti manualmente e ripristinerà solo i 19 veicoli MW26. Continuare?')) return;
+  DB.veicoli = _MW26.veicoli.map(v => ({...v}));
+  DB.aste = _MW26.aste.map(a => ({...a}));
+  DB.transazioni = [];
+  DB.quotazioni = [];
+  DB._nextId = { v: _MW26.nextV, t: 1, a: _MW26.nextA, q: 1 };
+  saveToLocalStorage(false);
+  updateDashboard(); renderVeicoli();
+  updateDBStatus();
+  showToast('⚠ Database ripristinato ai dati iniziali');
+}
+
+function showStorageStatus(msg, color) {
+  const el = document.getElementById('storage-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = color || '#5ddb8f';
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+function updateDBStatus() {
+  const tot = DB.veicoli.length + DB.transazioni.length + DB.aste.length + DB.quotazioni.length;
+  const el = document.getElementById('db-size');
+  if (el) el.textContent = tot;
+  // Version
+  const vEl = document.getElementById('db-version');
+  const vSub = document.getElementById('db-version-sub');
+  const savedV = parseInt(localStorage.getItem(LS_VERSION_KEY) || '0');
+  if (vEl) vEl.textContent = `v${savedV} / v${DB_BASE_VERSION}`;
+  if (vSub) {
+    if (savedV >= DB_BASE_VERSION) {
+      vSub.textContent = '✓ Dati aggiornati';
+      vSub.style.color = '#5ddb8f';
+    } else {
+      vSub.textContent = '⟳ Aggiornamento in corso…';
+      vSub.style.color = var_oro;
+    }
+  }
+  // Last save time
+  try {
+    const meta = JSON.parse(localStorage.getItem(LS_META_KEY) || 'null');
+    const lsEl = document.getElementById('db-last-save');
+    const ssEl = document.getElementById('db-storage-size');
+    if (lsEl) lsEl.textContent = meta ? fmtDateTime(new Date(meta.ts)) : 'Mai';
+    if (ssEl) {
+      const raw = localStorage.getItem(LS_KEY);
+      ssEl.textContent = raw ? (raw.length / 1024).toFixed(1) + ' KB' : '0 KB';
+    }
+  } catch(e) {}
+}
+
+function fmtDateTime(d) {
+  return d.toLocaleDateString('it-IT') + ' ' + d.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
+}
+
+// ===== AUTO-SAVE (hook into all save functions) =====
+const _origSalvaVeicolo = salvaVeicolo;
+const _origSalvaTrans = salvaTransazione;
+const _origSalvaAsta = salvaAsta;
+const _origSalvaQuot = salvaQuotazione;
+const _origElimV = eliminaVeicolo;
+const _origElimT = eliminaTrans;
+const _origElimA = eliminaAsta;
+const _origElimQ = eliminaQuot;
+
+function autoSave() { saveToLocalStorage(false); }
+
+// Wrap all mutating functions
+window.salvaVeicolo = function() { _origSalvaVeicolo(); autoSave(); };
+window.salvaTransazione = function() { _origSalvaTrans(); autoSave(); };
+window.salvaAsta = function() { _origSalvaAsta(); autoSave(); };
+window.salvaQuotazione = function() { _origSalvaQuot(); autoSave(); };
+window.eliminaVeicolo = function(id) { _origElimV(id); autoSave(); };
+window.eliminaTrans = function(id) { _origElimT(id); autoSave(); };
+window.eliminaAsta = function(id) { _origElimA(id); autoSave(); };
+window.eliminaQuot = function(id) { _origElimQ(id); autoSave(); };
+
+// ===== EXPORT JSON =====
+function exportJSON() {
+  const payload = {
+    _version: 1,
+    _exportedAt: new Date().toISOString(),
+    _app: 'Registro Auto Storiche',
+    veicoli: DB.veicoli,
+    transazioni: DB.transazioni,
+    aste: DB.aste,
+    quotazioni: DB.quotazioni,
+    _nextId: DB._nextId
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `registro_auto_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('⬇ JSON esportato');
+}
+
+// ===== EXPORT CSV =====
+function exportCSV() {
+  const headers = ['ID','Marca','Modello','Anno','Targa','Telaio','Km','Colore','Carrozzeria','Alimentazione','Paese','Stato','Valore EUR','Categoria','Certificazione','Note'];
+  const rows = DB.veicoli.map(v => [
+    v.id, v.marca, v.modello, v.anno, v.targa, v.telaio,
+    v.km, v.colore, v.carr, v.alim, v.paese, v.stato,
+    v.valore, v.cat, v.cert, (v.note||'').replace(/,/g,' ')
+  ].map(x => `"${x||''}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['\ufeff' + csv], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `veicoli_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('⬇ CSV esportato');
+}
+
+// ===== IMPORT JSON =====
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  document.getElementById('import-filename').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.veicoli) throw new Error('File non valido: manca il campo "veicoli"');
+      const counts = {
+        v: (data.veicoli||[]).length,
+        t: (data.transazioni||[]).length,
+        a: (data.aste||[]).length,
+        q: (data.quotazioni||[]).length
+      };
+      if (!confirm(`Importare il file "${file.name}"?\n\nContenuto:\n• ${counts.v} Veicoli\n• ${counts.t} Transazioni\n• ${counts.a} Aste\n• ${counts.q} Quotazioni\n\nI dati attuali verranno sovrascritti.`)) return;
+      DB.veicoli = data.veicoli || [];
+      DB.transazioni = data.transazioni || [];
+      DB.aste = data.aste || [];
+      DB.quotazioni = data.quotazioni || [];
+      DB._nextId = data._nextId || { v: counts.v+1, t: counts.t+1, a: counts.a+1, q: counts.q+1 };
+      saveToLocalStorage(false);
+      updateDashboard(); renderVeicoli();
+      updateDBStatus();
+      const st = document.getElementById('import-status');
+      st.textContent = `✓ Importati: ${counts.v} veicoli · ${counts.t} transazioni · ${counts.a} aste · ${counts.q} quotazioni`;
+      st.style.color = '#5ddb8f';
+      st.style.display = 'block';
+      showToast(`✓ Importati ${counts.v} veicoli`);
+    } catch(err) {
+      const st = document.getElementById('import-status');
+      st.textContent = '✗ Errore: ' + err.message;
+      st.style.color = '#e74c3c';
+      st.style.display = 'block';
+    }
+  };
+  reader.readAsText(file);
+}
+
+
+// ===== INIT =====
+// ===== VERSIONE DATI BASE (aggiorna questo numero ogni volta che importi nuovi lotti) =====
+const DB_BASE_VERSION = 2; // MW26(v1) + MC26(v2)
+const LS_VERSION_KEY = 'registro_db_base_version';
+
+function getBaseData() {
+  return {
+    veicoli: [..._MW26.veicoli, ..._MC26.veicoli],
+    aste: [..._MW26.aste, ..._MC26.aste],
+    nextV: _MC26.veicoli.length + _MW26.veicoli.length + 1,
+    nextA: _MC26.aste.length + _MW26.aste.length + 1
+  };
+}
+
+function mergeBaseUpdate() {
+  // Merge new base lots without overwriting user-added data
+  const base = getBaseData();
+  const existingVIds = new Set(DB.veicoli.map(v => v.id));
+  const existingAIds = new Set(DB.aste.map(a => a.id));
+
+  // Add only new entries (those not already in DB)
+  let addedV = 0, addedA = 0;
+  base.veicoli.forEach(v => {
+    if (!existingVIds.has(v.id)) { DB.veicoli.push(v); addedV++; }
+  });
+  base.aste.forEach(a => {
+    if (!existingAIds.has(a.id)) { DB.aste.push(a); addedA++; }
+  });
+
+  // Update nextId if needed
+  if (base.nextV > DB._nextId.v) DB._nextId.v = base.nextV;
+  if (base.nextA > DB._nextId.a) DB._nextId.a = base.nextA;
+
+  localStorage.setItem(LS_VERSION_KEY, DB_BASE_VERSION);
+  saveToLocalStorage(false);
+
+  if (addedV > 0 || addedA > 0) {
+    showToast(`✓ Aggiornamento automatico: +${addedV} veicoli, +${addedA} aste`);
+    updateDashboard(); renderVeicoli(); updateDBStatus();
+  }
+}
+
+function checkBaseVersion() {
+  const savedVersion = parseInt(localStorage.getItem(LS_VERSION_KEY) || '0');
+  if (savedVersion < DB_BASE_VERSION) {
+    mergeBaseUpdate();
+  }
+}
+
+function initApp() {
+  // 1. Try Dropbox first, fallback to localStorage, then defaults
+  const token = getDropboxToken();
+  if (token) {
+    // Load from localStorage immediately for snappy UI, then sync from Dropbox
+    const loaded = loadFromLocalStorage(false);
+    if (!loaded) saveToLocalStorage(false);
+    checkBaseVersion(); // auto-update base data if new version
+    updateDashboard(); renderVeicoli(); updateDBStatus();
+    syncFromDropbox(false); // background sync
+  } else {
+    const loaded = loadFromLocalStorage(false);
+    if (!loaded) saveToLocalStorage(false);
+    checkBaseVersion(); // auto-update base data if new version
+    updateDashboard(); renderVeicoli(); updateDBStatus();
+  }
+  updateDropboxUI();
+}
+
+// Boot
+checkAuth();
+
+</script>
+</body>
+</html>
